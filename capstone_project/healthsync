@@ -1,1 +1,1896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HealthSync — Your Health, Simplified</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #0a9396;
+    --teal-light: #94d2bd;
+    --teal-dark: #005f73;
+    --sage: #4caf88;
+    --sage-light: #e9f5f0;
+    --blue: #1a6b8c;
+    --blue-light: #e8f4f8;
+    --cream: #fafaf8;
+    --white: #ffffff;
+    --gray-50: #f8f9fa;
+    --gray-100: #f0f2f4;
+    --gray-200: #e2e8ed;
+    --gray-400: #9aacbb;
+    --gray-600: #5a6a7a;
+    --gray-800: #1e2d3d;
+    --warning: #e9a829;
+    --danger: #e05c5c;
+    --success: #3dab7c;
+    --font-display: 'DM Serif Display', Georgia, serif;
+    --font-body: 'DM Sans', system-ui, sans-serif;
+    --shadow-sm: 0 2px 8px rgba(10,80,100,0.06);
+    --shadow-md: 0 4px 20px rgba(10,80,100,0.10);
+    --shadow-lg: 0 8px 40px rgba(10,80,100,0.14);
+    --radius: 14px;
+    --radius-lg: 20px;
+    --transition: 0.22s cubic-bezier(0.4,0,0.2,1);
+  }
 
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; font-size: 16px; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--cream);
+    color: var(--gray-800);
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+
+  /* ===== SIDEBAR ===== */
+  #sidebar {
+    position: fixed; top: 0; left: 0;
+    width: 240px; height: 100vh;
+    background: var(--teal-dark);
+    display: flex; flex-direction: column;
+    z-index: 100;
+    transition: transform var(--transition);
+  }
+
+  .sidebar-logo {
+    padding: 28px 24px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .sidebar-logo h1 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    color: #fff;
+    letter-spacing: -0.02em;
+  }
+  .sidebar-logo span { color: var(--teal-light); }
+
+  .sidebar-nav { padding: 16px 12px; flex: 1; }
+
+  .nav-section-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    padding: 12px 12px 6px;
+  }
+
+  .nav-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    color: rgba(255,255,255,0.72);
+    cursor: pointer;
+    transition: all var(--transition);
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 2px;
+    border: none; background: none; width: 100%; text-align: left;
+  }
+  .nav-item:hover { background: rgba(255,255,255,0.1); color: #fff; }
+  .nav-item.active { background: rgba(255,255,255,0.15); color: #fff; }
+  .nav-item .nav-icon { font-size: 1.1rem; width: 22px; text-align: center; }
+
+  .sidebar-footer {
+    padding: 16px 12px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  .user-card {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border-radius: 10px;
+    background: rgba(255,255,255,0.08);
+    cursor: pointer;
+  }
+  .user-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--teal-light), var(--sage));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; color: var(--teal-dark); font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+  .user-info { flex: 1; min-width: 0; }
+  .user-name { font-size: 0.82rem; font-weight: 600; color: #fff; }
+  .user-role { font-size: 0.72rem; color: rgba(255,255,255,0.5); }
+
+  /* ===== MAIN CONTENT ===== */
+  #main {
+    margin-left: 240px;
+    min-height: 100vh;
+    transition: margin var(--transition);
+  }
+
+  /* ===== TOP BAR ===== */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(250,250,248,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--gray-200);
+    padding: 0 32px;
+    height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .topbar-title { font-size: 1.05rem; font-weight: 600; color: var(--gray-800); }
+  .topbar-actions { display: flex; align-items: center; gap: 12px; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 9px 18px; border-radius: 9px;
+    font-size: 0.85rem; font-weight: 600;
+    border: none; cursor: pointer;
+    transition: all var(--transition);
+    font-family: var(--font-body);
+    text-decoration: none;
+  }
+  .btn-primary { background: var(--teal); color: #fff; }
+  .btn-primary:hover { background: var(--teal-dark); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+  .btn-ghost { background: transparent; color: var(--gray-600); border: 1px solid var(--gray-200); }
+  .btn-ghost:hover { background: var(--gray-100); }
+  .btn-sm { padding: 6px 13px; font-size: 0.78rem; }
+  .btn-danger { background: var(--danger); color: #fff; }
+  .btn-warning { background: var(--warning); color: #fff; }
+  .btn-success { background: var(--success); color: #fff; }
+
+  .notif-btn {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: var(--gray-100); border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; position: relative; transition: all var(--transition);
+  }
+  .notif-btn:hover { background: var(--gray-200); }
+  .notif-badge {
+    position: absolute; top: 5px; right: 5px;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--danger); border: 2px solid var(--cream);
+  }
+
+  /* ===== PAGES ===== */
+  .page { display: none; padding: 32px; animation: fadeInUp 0.3s ease; }
+  .page.active { display: block; }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===== LANDING PAGE ===== */
+  #page-landing { padding: 0; }
+
+  .hero {
+    background: linear-gradient(135deg, var(--teal-dark) 0%, var(--blue) 50%, var(--teal) 100%);
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    position: relative; overflow: hidden;
+    padding: 40px 60px;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute; top: -100px; right: -100px;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    background: rgba(148,210,189,0.12);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute; bottom: -80px; left: 30%;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+    pointer-events: none;
+  }
+
+  .hero-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 80px; position: relative; z-index: 2;
+  }
+  .hero-logo {
+    font-family: var(--font-display);
+    font-size: 1.6rem; color: #fff;
+  }
+  .hero-logo span { color: var(--teal-light); }
+  .hero-nav-links { display: flex; gap: 8px; }
+  .hero-nav-links .btn { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.25); }
+  .hero-nav-links .btn:hover { background: rgba(255,255,255,0.25); }
+  .btn-light { background: #fff !important; color: var(--teal-dark) !important; }
+
+  .hero-content {
+    flex: 1; display: flex; align-items: center;
+    position: relative; z-index: 2;
+  }
+  .hero-text { max-width: 560px; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 20px; padding: 6px 14px;
+    font-size: 0.78rem; color: var(--teal-light);
+    font-weight: 600; letter-spacing: 0.04em;
+    margin-bottom: 24px;
+  }
+  .hero-h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.8rem, 5vw, 4rem);
+    color: #fff; line-height: 1.12;
+    letter-spacing: -0.03em;
+    margin-bottom: 20px;
+  }
+  .hero-h1 em { color: var(--teal-light); font-style: italic; }
+  .hero-desc {
+    font-size: 1.05rem; color: rgba(255,255,255,0.75);
+    margin-bottom: 36px; line-height: 1.7; max-width: 440px;
+  }
+  .hero-cta { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  .hero-stats {
+    display: flex; gap: 40px; margin-top: 60px;
+    padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.15);
+  }
+  .stat-item { }
+  .stat-num {
+    font-family: var(--font-display);
+    font-size: 2rem; color: #fff; line-height: 1;
+  }
+  .stat-label { font-size: 0.8rem; color: rgba(255,255,255,0.55); margin-top: 4px; }
+
+  .hero-visual {
+    position: absolute; right: 60px; top: 50%;
+    transform: translateY(-50%);
+    width: 380px;
+  }
+
+  .floating-card {
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    margin-bottom: 14px;
+    animation: float 4s ease-in-out infinite;
+  }
+  .floating-card:nth-child(2) { animation-delay: -1.5s; margin-left: 30px; }
+  .floating-card:nth-child(3) { animation-delay: -3s; }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .fc-label { font-size: 0.7rem; color: var(--teal-light); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+  .fc-title { font-weight: 600; color: #fff; font-size: 0.9rem; margin-bottom: 4px; }
+  .fc-sub { font-size: 0.78rem; color: rgba(255,255,255,0.6); }
+  .fc-row { display: flex; justify-content: space-between; align-items: center; }
+  .fc-chip {
+    background: rgba(61,171,124,0.25); color: #7fffc4;
+    padding: 3px 10px; border-radius: 12px; font-size: 0.72rem; font-weight: 600;
+  }
+
+  /* Features section */
+  .features-section { padding: 80px 60px; background: var(--white); }
+  .section-header { text-align: center; margin-bottom: 56px; }
+  .section-tag {
+    display: inline-block;
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--teal);
+    background: var(--sage-light); padding: 5px 14px; border-radius: 20px;
+    margin-bottom: 16px;
+  }
+  .section-h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3.5vw, 2.8rem);
+    color: var(--gray-800); line-height: 1.18; letter-spacing: -0.02em;
+  }
+  .section-h2 em { color: var(--teal); font-style: italic; }
+  .section-desc { font-size: 1rem; color: var(--gray-600); margin-top: 12px; max-width: 520px; margin-left: auto; margin-right: auto; }
+
+  .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
+
+  .feature-card {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    transition: all var(--transition);
+    cursor: default;
+  }
+  .feature-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--teal-light); }
+  .feature-icon-wrap {
+    width: 52px; height: 52px; border-radius: 14px;
+    background: linear-gradient(135deg, var(--teal-light), var(--sage-light));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; margin-bottom: 18px;
+  }
+  .feature-title { font-size: 1rem; font-weight: 700; color: var(--gray-800); margin-bottom: 8px; }
+  .feature-desc { font-size: 0.86rem; color: var(--gray-600); line-height: 1.6; }
+
+  /* CTA section */
+  .cta-section {
+    padding: 80px 60px;
+    background: linear-gradient(135deg, var(--teal-dark), var(--blue));
+    text-align: center;
+  }
+  .cta-section h2 { font-family: var(--font-display); font-size: 2.4rem; color: #fff; margin-bottom: 16px; }
+  .cta-section p { color: rgba(255,255,255,0.7); max-width: 420px; margin: 0 auto 32px; }
+
+  /* ===== DASHBOARD ===== */
+  .page-header { margin-bottom: 28px; }
+  .page-header h2 { font-family: var(--font-display); font-size: 1.8rem; color: var(--gray-800); letter-spacing: -0.02em; }
+  .page-header p { color: var(--gray-600); font-size: 0.9rem; margin-top: 4px; }
+
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+
+  .stat-card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    padding: 20px;
+    transition: all var(--transition);
+  }
+  .stat-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+  .stat-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+  .stat-card-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+  }
+  .icon-teal { background: rgba(10,147,150,0.12); }
+  .icon-sage { background: rgba(76,175,136,0.12); }
+  .icon-blue { background: rgba(26,107,140,0.12); }
+  .icon-warn { background: rgba(233,168,41,0.12); }
+  .stat-card-trend { font-size: 0.72rem; font-weight: 600; }
+  .trend-up { color: var(--success); }
+  .trend-down { color: var(--danger); }
+  .stat-card-value { font-family: var(--font-display); font-size: 2rem; color: var(--gray-800); line-height: 1; }
+  .stat-card-label { font-size: 0.78rem; color: var(--gray-600); margin-top: 4px; font-weight: 500; }
+
+  .dashboard-grid { display: grid; grid-template-columns: 1fr 340px; gap: 20px; }
+
+  .card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--gray-100);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .card-title { font-size: 0.9rem; font-weight: 700; color: var(--gray-800); }
+  .card-body { padding: 20px 22px; }
+
+  .appt-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .appt-item:last-child { border-bottom: none; }
+  .appt-date-box {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: var(--blue-light);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .appt-day { font-size: 1.1rem; font-weight: 700; color: var(--blue); line-height: 1; }
+  .appt-month { font-size: 0.6rem; font-weight: 600; color: var(--gray-400); text-transform: uppercase; }
+  .appt-info { flex: 1; }
+  .appt-doctor { font-size: 0.85rem; font-weight: 600; color: var(--gray-800); }
+  .appt-type { font-size: 0.76rem; color: var(--gray-600); }
+  .appt-time { font-size: 0.76rem; color: var(--teal); font-weight: 600; }
+
+  .pill-badge {
+    display: inline-block; padding: 3px 10px; border-radius: 20px;
+    font-size: 0.7rem; font-weight: 700;
+  }
+  .badge-green { background: rgba(61,171,124,0.12); color: var(--success); }
+  .badge-blue { background: var(--blue-light); color: var(--blue); }
+  .badge-warn { background: rgba(233,168,41,0.12); color: var(--warning); }
+  .badge-red { background: rgba(224,92,92,0.1); color: var(--danger); }
+
+  .notif-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .notif-item:last-child { border-bottom: none; }
+  .notif-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    margin-top: 6px; flex-shrink: 0;
+  }
+  .notif-msg { font-size: 0.82rem; color: var(--gray-700); line-height: 1.5; }
+  .notif-time { font-size: 0.72rem; color: var(--gray-400); margin-top: 2px; }
+
+  .med-reminder-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 0; border-bottom: 1px solid var(--gray-100);
+  }
+  .med-reminder-item:last-child { border-bottom: none; }
+  .med-icon {
+    width: 36px; height: 36px; border-radius: 9px;
+    background: var(--sage-light);
+    display: flex; align-items: center; justify-content: center; font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .med-name { font-size: 0.84rem; font-weight: 600; color: var(--gray-800); }
+  .med-dose { font-size: 0.74rem; color: var(--gray-600); }
+  .med-time { font-size: 0.76rem; font-weight: 600; color: var(--teal); margin-left: auto; }
+
+  /* ===== APPOINTMENTS PAGE ===== */
+  .appt-page-grid { display: grid; grid-template-columns: 1fr 320px; gap: 24px; }
+
+  .appt-full-item {
+    display: flex; align-items: center; gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .appt-full-item:last-child { border-bottom: none; }
+  .appt-full-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    background: var(--blue-light);
+    display: flex; align-items: center; justify-content: center; font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+  .appt-full-info { flex: 1; }
+  .appt-full-doctor { font-size: 0.9rem; font-weight: 700; color: var(--gray-800); }
+  .appt-full-detail { font-size: 0.78rem; color: var(--gray-600); margin-top: 2px; }
+  .appt-full-actions { display: flex; gap: 8px; }
+
+  .new-appt-form { }
+  .form-group { margin-bottom: 16px; }
+  .form-label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--gray-700); margin-bottom: 6px; }
+  .form-control {
+    width: 100%; padding: 10px 14px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 9px; font-size: 0.85rem;
+    font-family: var(--font-body);
+    color: var(--gray-800);
+    background: var(--gray-50);
+    transition: border-color var(--transition), box-shadow var(--transition);
+    outline: none;
+  }
+  .form-control:focus {
+    border-color: var(--teal); background: #fff;
+    box-shadow: 0 0 0 3px rgba(10,147,150,0.1);
+  }
+  select.form-control { cursor: pointer; }
+  textarea.form-control { resize: vertical; min-height: 80px; }
+
+  /* ===== MEDICATION PAGE ===== */
+  .med-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+
+  .med-card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    padding: 20px;
+    transition: all var(--transition);
+    position: relative; overflow: hidden;
+  }
+  .med-card::before {
+    content: ''; position: absolute; top: 0; left: 0;
+    width: 4px; height: 100%;
+  }
+  .med-card.active-med::before { background: var(--success); }
+  .med-card.low-stock::before { background: var(--warning); }
+  .med-card.paused::before { background: var(--gray-400); }
+  .med-card:hover { box-shadow: var(--shadow-md); }
+
+  .med-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+  .med-card-icon { font-size: 1.8rem; }
+  .med-card-name { font-size: 1rem; font-weight: 700; color: var(--gray-800); }
+  .med-card-generic { font-size: 0.76rem; color: var(--gray-600); }
+  .med-details { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .med-detail-item label { font-size: 0.68rem; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.05em; display: block; }
+  .med-detail-item span { font-size: 0.83rem; color: var(--gray-800); font-weight: 500; }
+  .med-progress { margin-top: 14px; }
+  .med-progress label { font-size: 0.72rem; color: var(--gray-600); font-weight: 500; margin-bottom: 6px; display: flex; justify-content: space-between; }
+  .progress-bar { height: 6px; background: var(--gray-100); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+  .fill-green { background: var(--success); }
+  .fill-warn { background: var(--warning); }
+  .fill-gray { background: var(--gray-400); }
+
+  .schedule-row { display: flex; gap: 8px; margin-top: 12px; }
+  .sched-time {
+    flex: 1; text-align: center; padding: 8px;
+    border-radius: 8px; font-size: 0.75rem; font-weight: 600;
+  }
+  .sched-taken { background: rgba(61,171,124,0.12); color: var(--success); }
+  .sched-pending { background: var(--blue-light); color: var(--blue); }
+  .sched-missed { background: rgba(224,92,92,0.1); color: var(--danger); }
+
+  /* ===== HEALTH RECORDS ===== */
+  .records-toolbar {
+    display: flex; gap: 12px; align-items: center;
+    margin-bottom: 24px; flex-wrap: wrap;
+  }
+  .search-box {
+    flex: 1; min-width: 200px;
+    display: flex; align-items: center; gap: 10px;
+    background: var(--white); border: 1.5px solid var(--gray-200);
+    border-radius: 10px; padding: 9px 14px;
+  }
+  .search-box input { border: none; outline: none; flex: 1; font-size: 0.85rem; font-family: var(--font-body); color: var(--gray-800); background: transparent; }
+  .search-icon { color: var(--gray-400); font-size: 1rem; }
+
+  .filter-chips { display: flex; gap: 8px; }
+  .chip {
+    padding: 7px 14px; border-radius: 20px;
+    font-size: 0.78rem; font-weight: 600;
+    border: 1.5px solid var(--gray-200);
+    background: transparent; color: var(--gray-600);
+    cursor: pointer; transition: all var(--transition);
+    font-family: var(--font-body);
+  }
+  .chip:hover { border-color: var(--teal); color: var(--teal); }
+  .chip.active { background: var(--teal); border-color: var(--teal); color: #fff; }
+
+  .upload-zone {
+    border: 2px dashed var(--gray-200);
+    border-radius: var(--radius);
+    padding: 36px;
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition);
+    background: var(--gray-50);
+    margin-bottom: 24px;
+  }
+  .upload-zone:hover { border-color: var(--teal); background: rgba(10,147,150,0.03); }
+  .upload-icon { font-size: 2rem; margin-bottom: 10px; }
+  .upload-text { font-size: 0.9rem; font-weight: 600; color: var(--gray-700); margin-bottom: 4px; }
+  .upload-sub { font-size: 0.78rem; color: var(--gray-400); }
+
+  .records-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+
+  .record-card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    padding: 18px;
+    cursor: pointer;
+    transition: all var(--transition);
+    text-align: center;
+  }
+  .record-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); border-color: var(--teal-light); }
+  .record-icon { font-size: 2.2rem; margin-bottom: 12px; }
+  .record-name { font-size: 0.84rem; font-weight: 700; color: var(--gray-800); margin-bottom: 4px; }
+  .record-meta { font-size: 0.72rem; color: var(--gray-400); }
+  .record-tag {
+    display: inline-block; margin-top: 10px; padding: 3px 10px;
+    border-radius: 12px; font-size: 0.68rem; font-weight: 700;
+  }
+
+  /* ===== AUTH PAGE ===== */
+  #page-auth {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, var(--teal-dark) 0%, var(--blue) 100%);
+    padding: 32px;
+  }
+
+  .auth-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 44px;
+    width: 100%; max-width: 420px;
+    box-shadow: var(--shadow-lg);
+  }
+  .auth-logo { font-family: var(--font-display); font-size: 1.5rem; color: var(--teal-dark); text-align: center; margin-bottom: 8px; }
+  .auth-logo span { color: var(--teal); }
+  .auth-tagline { text-align: center; color: var(--gray-600); font-size: 0.85rem; margin-bottom: 32px; }
+  .auth-tabs { display: flex; background: var(--gray-100); border-radius: 10px; padding: 4px; margin-bottom: 28px; }
+  .auth-tab {
+    flex: 1; text-align: center; padding: 9px;
+    border-radius: 8px; font-size: 0.83rem; font-weight: 600;
+    cursor: pointer; transition: all var(--transition);
+    border: none; background: transparent; font-family: var(--font-body); color: var(--gray-600);
+  }
+  .auth-tab.active { background: var(--white); color: var(--teal-dark); box-shadow: var(--shadow-sm); }
+  .auth-form-panel { display: none; }
+  .auth-form-panel.active { display: block; }
+
+  .profile-section {
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .profile-header {
+    display: flex; align-items: center; gap: 18px;
+    padding: 20px 22px; background: linear-gradient(135deg, var(--teal-dark), var(--blue));
+    border-radius: var(--radius); margin-bottom: 4px;
+  }
+  .profile-avatar {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-size: 1.6rem; color: #fff;
+    flex-shrink: 0; border: 3px solid rgba(255,255,255,0.3);
+  }
+  .profile-name { font-family: var(--font-display); font-size: 1.3rem; color: #fff; }
+  .profile-id { font-size: 0.78rem; color: rgba(255,255,255,0.6); margin-top: 2px; }
+
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .info-item { }
+  .info-label { font-size: 0.72rem; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+  .info-value { font-size: 0.88rem; font-weight: 500; color: var(--gray-800); }
+
+  .emergency-contacts { }
+  .emergency-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 0; border-bottom: 1px solid var(--gray-100);
+  }
+  .emergency-item:last-child { border-bottom: none; }
+  .emergency-icon {
+    width: 36px; height: 36px; border-radius: 9px; background: rgba(224,92,92,0.1);
+    display: flex; align-items: center; justify-content: center; font-size: 0.9rem; flex-shrink: 0;
+  }
+  .emergency-name { font-size: 0.84rem; font-weight: 600; color: var(--gray-800); }
+  .emergency-relation { font-size: 0.74rem; color: var(--gray-600); }
+  .emergency-phone { font-size: 0.78rem; color: var(--teal); font-weight: 600; margin-left: auto; }
+
+  /* ===== AUTH MODE ===== */
+  body.auth-mode #sidebar { display: none; }
+  body.auth-mode #main { margin-left: 0; }
+  body.auth-mode .topbar { display: none; }
+
+  /* ===== LANDING MODE ===== */
+  body.landing-mode #sidebar { display: none; }
+  body.landing-mode #main { margin-left: 0; }
+  body.landing-mode .topbar { display: none; }
+
+  /* ===== TOAST ===== */
+  #toast-container { position: fixed; bottom: 28px; right: 28px; z-index: 999; display: flex; flex-direction: column; gap: 10px; }
+  .toast {
+    background: var(--gray-800); color: #fff;
+    padding: 12px 18px; border-radius: 10px;
+    font-size: 0.83rem; font-weight: 500;
+    box-shadow: var(--shadow-lg);
+    animation: slideInRight 0.3s ease;
+    display: flex; align-items: center; gap: 8px;
+    max-width: 300px;
+  }
+  @keyframes slideInRight {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* ===== MODAL ===== */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(10,30,50,0.45);
+    z-index: 200; display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(4px);
+    opacity: 0; pointer-events: none; transition: opacity var(--transition);
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--white); border-radius: var(--radius-lg);
+    padding: 32px; width: 100%; max-width: 480px;
+    box-shadow: var(--shadow-lg);
+    transform: scale(0.95); transition: transform var(--transition);
+  }
+  .modal-overlay.open .modal { transform: scale(1); }
+  .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+  .modal-title { font-family: var(--font-display); font-size: 1.3rem; color: var(--gray-800); }
+  .modal-close { background: none; border: none; font-size: 1.3rem; cursor: pointer; color: var(--gray-400); padding: 4px; line-height: 1; transition: color var(--transition); }
+  .modal-close:hover { color: var(--gray-800); }
+
+  /* ===== DIVIDER ===== */
+  .divider { height: 1px; background: var(--gray-100); margin: 16px 0; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 900px) {
+    #sidebar { transform: translateX(-100%); }
+    #sidebar.open { transform: translateX(0); }
+    #main { margin-left: 0; }
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .dashboard-grid { grid-template-columns: 1fr; }
+    .appt-page-grid { grid-template-columns: 1fr; }
+    .med-grid { grid-template-columns: 1fr; }
+    .hero { padding: 32px; }
+    .hero-visual { display: none; }
+    .features-section, .cta-section { padding: 60px 32px; }
+    .hero-stats { gap: 24px; }
+    .info-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 600px) {
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .page { padding: 20px; }
+    .records-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  .gray-text { color: var(--gray-600); }
+  .text-sm { font-size: 0.8rem; }
+  .mt-4 { margin-top: 16px; }
+  .mb-4 { margin-bottom: 16px; }
+  .flex { display: flex; }
+  .gap-2 { gap: 8px; }
+  .items-center { align-items: center; }
+  .justify-between { justify-content: space-between; }
+  .w-full { width: 100%; }
+</style>
+</head>
+<body class="landing-mode">
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal-content">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title">Modal</span>
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<aside id="sidebar">
+  <div class="sidebar-logo">
+    <h1>Health<span>Sync</span></h1>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Overview</div>
+    <button class="nav-item active" onclick="navigate('dashboard', this)">
+      <span class="nav-icon">🏠</span> Dashboard
+    </button>
+    <div class="nav-section-label" style="margin-top:8px">Health</div>
+    <button class="nav-item" onclick="navigate('appointments', this)">
+      <span class="nav-icon">📅</span> Appointments
+    </button>
+    <button class="nav-item" onclick="navigate('medications', this)">
+      <span class="nav-icon">💊</span> Medications
+    </button>
+    <button class="nav-item" onclick="navigate('records', this)">
+      <span class="nav-icon">📁</span> Health Records
+    </button>
+    <div class="nav-section-label" style="margin-top:8px">Account</div>
+    <button class="nav-item" onclick="navigate('profile', this)">
+      <span class="nav-icon">👤</span> My Profile
+    </button>
+    <button class="nav-item" onclick="goToLanding()">
+      <span class="nav-icon">🏥</span> Back to Home
+    </button>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">AK</div>
+      <div class="user-info">
+        <div class="user-name">Arjun Kumar</div>
+        <div class="user-role">Patient · ID #48291</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div id="main">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <span class="topbar-title" id="topbar-title">Dashboard</span>
+    <div class="topbar-actions">
+      <button class="notif-btn" onclick="navigate('dashboard', null)">
+        🔔 <span class="notif-badge"></span>
+      </button>
+      <button class="btn btn-primary btn-sm" onclick="showNewApptModal()">+ New Appointment</button>
+    </div>
+  </div>
+
+  <!-- ===== LANDING PAGE ===== -->
+  <div class="page active" id="page-landing">
+    <section class="hero">
+      <nav class="hero-nav">
+        <div class="hero-logo">Health<span>Sync</span></div>
+        <div class="hero-nav-links">
+          <button class="btn" onclick="goToAuth('login')">Sign In</button>
+          <button class="btn btn-light" onclick="goToAuth('signup')">Get Started Free</button>
+        </div>
+      </nav>
+      <div class="hero-content">
+        <div class="hero-text">
+          <div class="hero-badge">✦ HIPAA Compliant &amp; Secure</div>
+          <h1 class="hero-h1">Your health,<br><em>perfectly</em> in sync.</h1>
+          <p class="hero-desc">Manage your appointments, medications, and medical records in one secure, beautifully designed platform. Designed for patients of all ages.</p>
+          <div class="hero-cta">
+            <button class="btn btn-light" style="padding:13px 26px;font-size:0.9rem" onclick="goToAuth('signup')">Start for Free →</button>
+            <button class="btn" style="background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);padding:13px 26px;font-size:0.9rem" onclick="goToDashboard()">View Demo</button>
+          </div>
+          <div class="hero-stats">
+            <div class="stat-item">
+              <div class="stat-num">50k+</div>
+              <div class="stat-label">Active Patients</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-num">300+</div>
+              <div class="stat-label">Linked Clinics</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-num">99.9%</div>
+              <div class="stat-label">Uptime</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="floating-card">
+          <div class="fc-label">Upcoming Appointment</div>
+          <div class="fc-row">
+            <div>
+              <div class="fc-title">Dr. Priya Sharma</div>
+              <div class="fc-sub">Cardiologist · Apr 22, 10:30 AM</div>
+            </div>
+            <div class="fc-chip">Confirmed</div>
+          </div>
+        </div>
+        <div class="floating-card">
+          <div class="fc-label">Medication Reminder</div>
+          <div class="fc-title">💊 Metformin 500mg</div>
+          <div class="fc-sub">Take with dinner · 7:00 PM daily</div>
+        </div>
+        <div class="floating-card">
+          <div class="fc-label">Health Summary</div>
+          <div class="fc-row">
+            <div><div class="fc-title">Blood Pressure</div><div class="fc-sub">120/80 mmHg · Normal</div></div>
+            <div class="fc-chip">↑ Good</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="features-section">
+      <div class="section-header">
+        <div class="section-tag">What We Offer</div>
+        <h2 class="section-h2">Everything you need to<br><em>manage your health</em></h2>
+        <p class="section-desc">From scheduling to records, HealthSync keeps all your medical information organized and accessible.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon-wrap">📅</div>
+          <div class="feature-title">Appointment Management</div>
+          <div class="feature-desc">Schedule, reschedule, and track all your medical appointments in one organized calendar view.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-wrap">💊</div>
+          <div class="feature-title">Medication Reminders</div>
+          <div class="feature-desc">Never miss a dose. Set smart reminders with dosage, frequency, and refill alerts.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-wrap">📁</div>
+          <div class="feature-title">Secure Health Records</div>
+          <div class="feature-desc">Upload and organize prescriptions, lab results, and medical documents safely in the cloud.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-wrap">🔔</div>
+          <div class="feature-title">Smart Notifications</div>
+          <div class="feature-desc">Receive timely alerts via push, email, or SMS for appointments and medication schedules.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-wrap">📊</div>
+          <div class="feature-title">Health Dashboard</div>
+          <div class="feature-desc">Get a clear overview of your health status, upcoming events, and recent activities at a glance.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-wrap">🔒</div>
+          <div class="feature-title">HIPAA Security</div>
+          <div class="feature-desc">Your data is encrypted end-to-end and stored in compliance with all healthcare regulations.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-section">
+      <h2>Start managing your health today</h2>
+      <p>Join over 50,000 patients who trust HealthSync for their daily health management.</p>
+      <button class="btn" style="background:#fff;color:var(--teal-dark);padding:14px 30px;font-size:0.95rem" onclick="goToAuth('signup')">Create Free Account →</button>
+    </section>
+  </div>
+
+  <!-- ===== AUTH PAGE ===== -->
+  <div class="page" id="page-auth" style="padding:0">
+    <div class="auth-card">
+      <div class="auth-logo">Health<span>Sync</span></div>
+      <div class="auth-tagline">Your health management platform</div>
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Sign In</button>
+        <button class="auth-tab" id="tab-signup" onclick="switchAuthTab('signup')">Create Account</button>
+      </div>
+      <!-- Login Form -->
+      <div class="auth-form-panel active" id="auth-login">
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input class="form-control" type="email" placeholder="arjun@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-control" type="password" placeholder="••••••••">
+        </div>
+        <button class="btn btn-primary w-full" style="justify-content:center;padding:12px" onclick="goToDashboard()">Sign In to HealthSync</button>
+        <div style="text-align:center;margin-top:14px"><a href="#" style="color:var(--teal);font-size:0.8rem;font-weight:600;text-decoration:none">Forgot password?</a></div>
+      </div>
+      <!-- Signup Form -->
+      <div class="auth-form-panel" id="auth-signup">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="form-group">
+            <label class="form-label">First Name</label>
+            <input class="form-control" type="text" placeholder="Arjun">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            <input class="form-control" type="text" placeholder="Kumar">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input class="form-control" type="email" placeholder="arjun@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date of Birth</label>
+          <input class="form-control" type="date">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-control" type="password" placeholder="Create a strong password">
+        </div>
+        <button class="btn btn-primary w-full" style="justify-content:center;padding:12px" onclick="goToDashboard()">Create My Account</button>
+      </div>
+      <div style="text-align:center;margin-top:20px">
+        <button class="btn btn-ghost btn-sm" onclick="goToLanding()">← Back to Home</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== DASHBOARD ===== -->
+  <div class="page" id="page-dashboard">
+    <div class="page-header">
+      <h2>Good morning, Arjun 👋</h2>
+      <p>Here's your health overview for Wednesday, April 16</p>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <div class="stat-card-icon icon-teal">📅</div>
+          <span class="stat-card-trend trend-up">↑ 2 this month</span>
+        </div>
+        <div class="stat-card-value">3</div>
+        <div class="stat-card-label">Upcoming Appointments</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <div class="stat-card-icon icon-sage">💊</div>
+          <span class="stat-card-trend trend-up">↑ 94% adherence</span>
+        </div>
+        <div class="stat-card-value">4</div>
+        <div class="stat-card-label">Active Medications</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <div class="stat-card-icon icon-blue">📁</div>
+          <span class="stat-card-trend trend-up">↑ 2 new</span>
+        </div>
+        <div class="stat-card-value">12</div>
+        <div class="stat-card-label">Health Records</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <div class="stat-card-icon icon-warn">🔔</div>
+          <span class="stat-card-trend trend-down">3 unread</span>
+        </div>
+        <div class="stat-card-value">5</div>
+        <div class="stat-card-label">Notifications</div>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <div>
+        <!-- Upcoming Appointments -->
+        <div class="card mb-4" style="margin-bottom:20px">
+          <div class="card-header">
+            <span class="card-title">📅 Upcoming Appointments</span>
+            <button class="btn btn-ghost btn-sm" onclick="navigate('appointments', null)">View all</button>
+          </div>
+          <div class="card-body">
+            <div class="appt-item">
+              <div class="appt-date-box"><div class="appt-day">22</div><div class="appt-month">Apr</div></div>
+              <div class="appt-info">
+                <div class="appt-doctor">Dr. Priya Sharma</div>
+                <div class="appt-type">Cardiology — Routine Checkup</div>
+              </div>
+              <div style="text-align:right">
+                <div class="appt-time">10:30 AM</div>
+                <span class="pill-badge badge-green">Confirmed</span>
+              </div>
+            </div>
+            <div class="appt-item">
+              <div class="appt-date-box"><div class="appt-day">28</div><div class="appt-month">Apr</div></div>
+              <div class="appt-info">
+                <div class="appt-doctor">Dr. Rajesh Nair</div>
+                <div class="appt-type">General Medicine — Follow-up</div>
+              </div>
+              <div style="text-align:right">
+                <div class="appt-time">2:00 PM</div>
+                <span class="pill-badge badge-blue">Scheduled</span>
+              </div>
+            </div>
+            <div class="appt-item">
+              <div class="appt-date-box"><div class="appt-day">05</div><div class="appt-month">May</div></div>
+              <div class="appt-info">
+                <div class="appt-doctor">Dr. Anita Gupta</div>
+                <div class="appt-type">Ophthalmology — Annual Eye Exam</div>
+              </div>
+              <div style="text-align:right">
+                <div class="appt-time">11:00 AM</div>
+                <span class="pill-badge badge-warn">Pending</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Today's Medications -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">💊 Today's Medications</span>
+            <button class="btn btn-ghost btn-sm" onclick="navigate('medications', null)">Manage</button>
+          </div>
+          <div class="card-body">
+            <div class="med-reminder-item">
+              <div class="med-icon">💊</div>
+              <div>
+                <div class="med-name">Metformin 500mg</div>
+                <div class="med-dose">1 tablet · With meals</div>
+              </div>
+              <div style="text-align:right">
+                <div class="med-time">8:00 AM</div>
+                <span class="pill-badge badge-green">Taken ✓</span>
+              </div>
+            </div>
+            <div class="med-reminder-item">
+              <div class="med-icon">🔵</div>
+              <div>
+                <div class="med-name">Atorvastatin 20mg</div>
+                <div class="med-dose">1 tablet · Evening</div>
+              </div>
+              <div style="text-align:right">
+                <div class="med-time">8:00 PM</div>
+                <span class="pill-badge badge-blue">Pending</span>
+              </div>
+            </div>
+            <div class="med-reminder-item">
+              <div class="med-icon">🟡</div>
+              <div>
+                <div class="med-name">Vitamin D3 1000 IU</div>
+                <div class="med-dose">1 capsule · After lunch</div>
+              </div>
+              <div style="text-align:right">
+                <div class="med-time">1:00 PM</div>
+                <span class="pill-badge badge-green">Taken ✓</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Notifications -->
+      <div>
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-header">
+            <span class="card-title">🔔 Notifications</span>
+            <button class="btn btn-ghost btn-sm" onclick="markAllRead()">Mark all read</button>
+          </div>
+          <div class="card-body">
+            <div class="notif-item">
+              <div class="notif-dot" style="background:var(--danger)"></div>
+              <div>
+                <div class="notif-msg">⚠️ Low medication stock: <strong>Metformin</strong> — 5 days remaining</div>
+                <div class="notif-time">30 min ago</div>
+              </div>
+            </div>
+            <div class="notif-item">
+              <div class="notif-dot" style="background:var(--teal)"></div>
+              <div>
+                <div class="notif-msg">📅 Appointment with Dr. Priya confirmed for Apr 22 at 10:30 AM</div>
+                <div class="notif-time">2 hours ago</div>
+              </div>
+            </div>
+            <div class="notif-item">
+              <div class="notif-dot" style="background:var(--warning)"></div>
+              <div>
+                <div class="notif-msg">📄 New lab result uploaded: Blood Panel Report</div>
+                <div class="notif-time">Yesterday</div>
+              </div>
+            </div>
+            <div class="notif-item">
+              <div class="notif-dot" style="background:var(--gray-400)"></div>
+              <div>
+                <div class="notif-msg">💊 Reminder: Take Atorvastatin at 8:00 PM tonight</div>
+                <div class="notif-time">Yesterday</div>
+              </div>
+            </div>
+            <div class="notif-item">
+              <div class="notif-dot" style="background:var(--gray-400)"></div>
+              <div>
+                <div class="notif-msg">✅ Annual health checkup completed — records updated</div>
+                <div class="notif-time">2 days ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Health Summary -->
+        <div class="card">
+          <div class="card-header"><span class="card-title">❤️ Health Summary</span></div>
+          <div class="card-body">
+            <div style="display:grid;gap:12px">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--gray-50);border-radius:9px">
+                <span style="font-size:0.82rem;font-weight:600;color:var(--gray-700)">Blood Pressure</span>
+                <span style="font-size:0.82rem;color:var(--success);font-weight:700">120/80 ✓</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--gray-50);border-radius:9px">
+                <span style="font-size:0.82rem;font-weight:600;color:var(--gray-700)">Blood Glucose</span>
+                <span style="font-size:0.82rem;color:var(--warning);font-weight:700">108 mg/dL ↑</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--gray-50);border-radius:9px">
+                <span style="font-size:0.82rem;font-weight:600;color:var(--gray-700)">Last Visit</span>
+                <span style="font-size:0.82rem;color:var(--gray-600);font-weight:600">Apr 10, 2025</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--gray-50);border-radius:9px">
+                <span style="font-size:0.82rem;font-weight:600;color:var(--gray-700)">Med Adherence</span>
+                <span style="font-size:0.82rem;color:var(--success);font-weight:700">94% this month</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== APPOINTMENTS PAGE ===== -->
+  <div class="page" id="page-appointments">
+    <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div>
+        <h2>Appointments</h2>
+        <p>Manage your medical appointments and visit history</p>
+      </div>
+      <button class="btn btn-primary" onclick="showNewApptModal()">+ Schedule Appointment</button>
+    </div>
+
+    <div class="appt-page-grid">
+      <div>
+        <!-- Upcoming -->
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-header">
+            <span class="card-title">📅 Upcoming Appointments</span>
+            <span class="pill-badge badge-blue">3 scheduled</span>
+          </div>
+          <div class="card-body">
+            <div class="appt-full-item">
+              <div class="appt-full-icon">🫀</div>
+              <div class="appt-full-info">
+                <div class="appt-full-doctor">Dr. Priya Sharma — Cardiology</div>
+                <div class="appt-full-detail">📍 Apollo Hospital, Gurugram · Apr 22, 2026 · 10:30 AM</div>
+                <div class="appt-full-detail" style="margin-top:2px">🗒 Routine cardiac checkup &amp; ECG review</div>
+              </div>
+              <div class="appt-full-actions">
+                <span class="pill-badge badge-green">Confirmed</span>
+                <button class="btn btn-ghost btn-sm" onclick="showToast('Reschedule form opened')">Reschedule</button>
+                <button class="btn btn-sm" style="background:rgba(224,92,92,0.1);color:var(--danger)" onclick="cancelAppt(this)">Cancel</button>
+              </div>
+            </div>
+            <div class="appt-full-item">
+              <div class="appt-full-icon">🩺</div>
+              <div class="appt-full-info">
+                <div class="appt-full-doctor">Dr. Rajesh Nair — General Medicine</div>
+                <div class="appt-full-detail">📍 Medanta Clinic, Sohna · Apr 28, 2026 · 2:00 PM</div>
+                <div class="appt-full-detail" style="margin-top:2px">🗒 Follow-up on diabetes management plan</div>
+              </div>
+              <div class="appt-full-actions">
+                <span class="pill-badge badge-blue">Scheduled</span>
+                <button class="btn btn-ghost btn-sm" onclick="showToast('Reschedule form opened')">Reschedule</button>
+                <button class="btn btn-sm" style="background:rgba(224,92,92,0.1);color:var(--danger)" onclick="cancelAppt(this)">Cancel</button>
+              </div>
+            </div>
+            <div class="appt-full-item">
+              <div class="appt-full-icon">👁️</div>
+              <div class="appt-full-info">
+                <div class="appt-full-doctor">Dr. Anita Gupta — Ophthalmology</div>
+                <div class="appt-full-detail">📍 Vasan Eye Care, Gurugram · May 5, 2026 · 11:00 AM</div>
+                <div class="appt-full-detail" style="margin-top:2px">🗒 Annual comprehensive eye examination</div>
+              </div>
+              <div class="appt-full-actions">
+                <span class="pill-badge badge-warn">Pending Confirm.</span>
+                <button class="btn btn-ghost btn-sm" onclick="showToast('Reschedule form opened')">Reschedule</button>
+                <button class="btn btn-sm" style="background:rgba(224,92,92,0.1);color:var(--danger)" onclick="cancelAppt(this)">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Past Appointments -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🕐 Past Appointments</span>
+          </div>
+          <div class="card-body">
+            <div class="appt-full-item">
+              <div class="appt-full-icon" style="background:var(--gray-100)">🩺</div>
+              <div class="appt-full-info">
+                <div class="appt-full-doctor">Dr. Rajesh Nair — General Medicine</div>
+                <div class="appt-full-detail">Apr 10, 2026 · Routine checkup · Diagnosis: Type 2 Diabetes (managed)</div>
+                <div class="appt-full-detail" style="color:var(--gray-400)">Notes: Adjusted Metformin dose to 500mg twice daily</div>
+              </div>
+              <span class="pill-badge badge-green">Completed</span>
+            </div>
+            <div class="appt-full-item">
+              <div class="appt-full-icon" style="background:var(--gray-100)">🫀</div>
+              <div class="appt-full-info">
+                <div class="appt-full-doctor">Dr. Priya Sharma — Cardiology</div>
+                <div class="appt-full-detail">Mar 18, 2026 · Cardiac evaluation · BP: 122/82 mmHg</div>
+                <div class="appt-full-detail" style="color:var(--gray-400)">Notes: Continue Atorvastatin, recheck in 6 weeks</div>
+              </div>
+              <span class="pill-badge badge-green">Completed</span>
+            </div>
+            <div class="appt-full-item">
+              <div class="appt-full-icon" style="background:var(--gray-100)">🦷</div>
+              <div class="appt-full-info">
+                <div class="appt-full-doctor">Dr. Sunita Rao — Dentistry</div>
+                <div class="appt-full-detail">Feb 5, 2026 · Dental cleaning &amp; X-ray</div>
+                <div class="appt-full-detail" style="color:var(--gray-400)">Notes: No cavities found. Next visit in 6 months.</div>
+              </div>
+              <span class="pill-badge badge-green">Completed</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Quick Schedule -->
+      <div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">➕ Quick Schedule</span></div>
+          <div class="card-body new-appt-form">
+            <div class="form-group">
+              <label class="form-label">Doctor / Specialist</label>
+              <select class="form-control">
+                <option>Select a doctor</option>
+                <option>Dr. Priya Sharma — Cardiology</option>
+                <option>Dr. Rajesh Nair — General Medicine</option>
+                <option>Dr. Anita Gupta — Ophthalmology</option>
+                <option>Dr. Sunita Rao — Dentistry</option>
+                <option>New Doctor</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Appointment Type</label>
+              <select class="form-control">
+                <option>Routine Checkup</option>
+                <option>Follow-up Visit</option>
+                <option>Urgent Consultation</option>
+                <option>Lab Results Review</option>
+                <option>Procedure</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Preferred Date</label>
+              <input class="form-control" type="date">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Preferred Time</label>
+              <select class="form-control">
+                <option>9:00 AM</option>
+                <option>10:00 AM</option>
+                <option>10:30 AM</option>
+                <option>11:00 AM</option>
+                <option>2:00 PM</option>
+                <option>3:00 PM</option>
+                <option>4:00 PM</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Notes (optional)</label>
+              <textarea class="form-control" placeholder="Describe your symptoms or reason for visit..."></textarea>
+            </div>
+            <button class="btn btn-primary w-full" style="justify-content:center" onclick="bookAppt()">Schedule Appointment</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MEDICATIONS PAGE ===== -->
+  <div class="page" id="page-medications">
+    <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div>
+        <h2>Medication Tracker</h2>
+        <p>Manage your prescriptions and daily medication schedule</p>
+      </div>
+      <button class="btn btn-primary" onclick="showAddMedModal()">+ Add Medication</button>
+    </div>
+
+    <!-- Today's Schedule Bar -->
+    <div class="card" style="margin-bottom:24px">
+      <div class="card-header"><span class="card-title">📋 Today's Schedule — Apr 16</span><span class="pill-badge badge-green">3 of 5 taken</span></div>
+      <div class="card-body">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <div class="sched-time sched-taken" style="min-width:80px">8:00 AM<br><small>Metformin ✓</small></div>
+          <div class="sched-time sched-taken" style="min-width:80px">1:00 PM<br><small>Vit D3 ✓</small></div>
+          <div class="sched-time sched-taken" style="min-width:80px">2:00 PM<br><small>Lisinopril ✓</small></div>
+          <div class="sched-time sched-pending" style="min-width:80px">8:00 PM<br><small>Metformin</small></div>
+          <div class="sched-time sched-pending" style="min-width:80px">9:00 PM<br><small>Atorvastatin</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="med-grid">
+      <div class="med-card active-med">
+        <div class="med-card-top">
+          <div>
+            <div class="med-card-icon">💊</div>
+            <div class="med-card-name">Metformin</div>
+            <div class="med-card-generic">Metformin HCl 500mg</div>
+          </div>
+          <span class="pill-badge badge-green">Active</span>
+        </div>
+        <div class="med-details">
+          <div class="med-detail-item"><label>Dosage</label><span>500mg</span></div>
+          <div class="med-detail-item"><label>Frequency</label><span>Twice daily</span></div>
+          <div class="med-detail-item"><label>Time</label><span>8 AM, 8 PM</span></div>
+          <div class="med-detail-item"><label>Prescribed by</label><span>Dr. Nair</span></div>
+          <div class="med-detail-item"><label>Refills left</label><span style="color:var(--danger)">1 left ⚠️</span></div>
+          <div class="med-detail-item"><label>Stock</label><span>5 days</span></div>
+        </div>
+        <div class="med-progress">
+          <label><span>Supply remaining</span><span style="color:var(--danger)">Low — 5 days</span></label>
+          <div class="progress-bar"><div class="progress-fill fill-warn" style="width:18%"></div></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:14px">
+          <button class="btn btn-success btn-sm" onclick="showToast('✓ Dose marked as taken!')">Mark Taken</button>
+          <button class="btn btn-ghost btn-sm" onclick="showToast('Refill request sent to Dr. Nair')">Request Refill</button>
+        </div>
+      </div>
+
+      <div class="med-card active-med">
+        <div class="med-card-top">
+          <div>
+            <div class="med-card-icon">🔵</div>
+            <div class="med-card-name">Atorvastatin</div>
+            <div class="med-card-generic">Atorvastatin 20mg</div>
+          </div>
+          <span class="pill-badge badge-green">Active</span>
+        </div>
+        <div class="med-details">
+          <div class="med-detail-item"><label>Dosage</label><span>20mg</span></div>
+          <div class="med-detail-item"><label>Frequency</label><span>Once daily</span></div>
+          <div class="med-detail-item"><label>Time</label><span>9:00 PM</span></div>
+          <div class="med-detail-item"><label>Prescribed by</label><span>Dr. Sharma</span></div>
+          <div class="med-detail-item"><label>Refills left</label><span>3 left</span></div>
+          <div class="med-detail-item"><label>Stock</label><span>28 days</span></div>
+        </div>
+        <div class="med-progress">
+          <label><span>Supply remaining</span><span>28 days</span></label>
+          <div class="progress-bar"><div class="progress-fill fill-green" style="width:80%"></div></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:14px">
+          <button class="btn btn-success btn-sm" onclick="showToast('✓ Dose marked as taken!')">Mark Taken</button>
+          <button class="btn btn-ghost btn-sm" onclick="showToast('Reminder updated')">Edit Reminder</button>
+        </div>
+      </div>
+
+      <div class="med-card active-med">
+        <div class="med-card-top">
+          <div>
+            <div class="med-card-icon">🟡</div>
+            <div class="med-card-name">Vitamin D3</div>
+            <div class="med-card-generic">Cholecalciferol 1000 IU</div>
+          </div>
+          <span class="pill-badge badge-green">Active</span>
+        </div>
+        <div class="med-details">
+          <div class="med-detail-item"><label>Dosage</label><span>1000 IU</span></div>
+          <div class="med-detail-item"><label>Frequency</label><span>Once daily</span></div>
+          <div class="med-detail-item"><label>Time</label><span>1:00 PM</span></div>
+          <div class="med-detail-item"><label>Prescribed by</label><span>Dr. Nair</span></div>
+          <div class="med-detail-item"><label>Refills left</label><span>5 left</span></div>
+          <div class="med-detail-item"><label>Stock</label><span>60 days</span></div>
+        </div>
+        <div class="med-progress">
+          <label><span>Supply remaining</span><span>60 days ✓</span></label>
+          <div class="progress-bar"><div class="progress-fill fill-green" style="width:95%"></div></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:14px">
+          <button class="btn btn-success btn-sm" onclick="showToast('✓ Dose marked as taken!')">Mark Taken</button>
+          <button class="btn btn-ghost btn-sm" onclick="showToast('Reminder updated')">Edit Reminder</button>
+        </div>
+      </div>
+
+      <div class="med-card paused">
+        <div class="med-card-top">
+          <div>
+            <div class="med-card-icon">⚪</div>
+            <div class="med-card-name">Lisinopril</div>
+            <div class="med-card-generic">Lisinopril 10mg</div>
+          </div>
+          <span class="pill-badge" style="background:var(--gray-100);color:var(--gray-600)">Paused</span>
+        </div>
+        <div class="med-details">
+          <div class="med-detail-item"><label>Dosage</label><span>10mg</span></div>
+          <div class="med-detail-item"><label>Frequency</label><span>Once daily</span></div>
+          <div class="med-detail-item"><label>Time</label><span>Morning</span></div>
+          <div class="med-detail-item"><label>Prescribed by</label><span>Dr. Sharma</span></div>
+          <div class="med-detail-item"><label>Paused since</label><span>Apr 12</span></div>
+          <div class="med-detail-item"><label>Reason</label><span>Dr. review</span></div>
+        </div>
+        <div class="med-progress">
+          <label><span>Status</span><span>Paused — pending review</span></label>
+          <div class="progress-bar"><div class="progress-fill fill-gray" style="width:45%"></div></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:14px">
+          <button class="btn btn-ghost btn-sm" onclick="showToast('Medication resumed')">Resume</button>
+          <button class="btn btn-sm" style="background:rgba(224,92,92,0.1);color:var(--danger)" onclick="showToast('Medication removed')">Remove</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== HEALTH RECORDS PAGE ===== -->
+  <div class="page" id="page-records">
+    <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div>
+        <h2>Health Records</h2>
+        <p>Your medical documents, securely stored and organized</p>
+      </div>
+      <button class="btn btn-primary" onclick="showToast('Upload dialog opened')">+ Upload Document</button>
+    </div>
+
+    <div class="upload-zone" onclick="showToast('Select files to upload...')">
+      <div class="upload-icon">📤</div>
+      <div class="upload-text">Drag &amp; drop files here, or click to browse</div>
+      <div class="upload-sub">PDF, JPEG, PNG · Max 25MB per file · Encrypted upload</div>
+    </div>
+
+    <div class="records-toolbar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Search records..." oninput="filterRecords(this.value)">
+      </div>
+      <div class="filter-chips">
+        <button class="chip active" onclick="setFilter(this, 'all')">All</button>
+        <button class="chip" onclick="setFilter(this, 'lab')">Lab Reports</button>
+        <button class="chip" onclick="setFilter(this, 'prescription')">Prescriptions</button>
+        <button class="chip" onclick="setFilter(this, 'imaging')">Imaging</button>
+        <button class="chip" onclick="setFilter(this, 'report')">Reports</button>
+      </div>
+    </div>
+
+    <div class="records-grid" id="records-grid">
+      <div class="record-card" data-tag="lab">
+        <div class="record-icon">🧪</div>
+        <div class="record-name">Blood Panel Report</div>
+        <div class="record-meta">Apr 10, 2026 · Dr. Nair · PDF</div>
+        <div><span class="record-tag badge-blue">Lab Report</span></div>
+        <div style="display:flex;gap:6px;margin-top:12px;justify-content:center">
+          <button class="btn btn-ghost btn-sm" onclick="showToast('Opening document...')">View</button>
+          <button class="btn btn-ghost btn-sm" onclick="showToast('Downloading...')">⬇</button>
+        </div>
+      </div>
+      <div class="record-card" data-tag="prescription">
+        <div class="record-icon">📝</div>
+        <div class="record-name">Metformin Prescription</div>
+        <div class="record-meta">Apr 10, 2026 · Dr. Nair · PDF</div>
+        <div><span class="record-tag badge-green">Prescription</span></div>
+        <div style="display:flex;gap:6px;margin-top:12px;justify-content:center">
+          <button class="btn btn-ghost btn-sm" onclick="showToast('Opening document...')">View</button>
+          <button class="btn btn-ghost btn-sm" onclick="showToast('Downloading...')">⬇</button>
+        </div>
+      </div>
+      <div class="record-card" data-tag="imaging">
+        <div class="record-icon">🫁</div>
+        <div class="record-name">Chest X-Ray</div>
+        <div class="record-meta">Mar 18, 2026 · Dr. Sharma · JPEG</div>
+        <div><span class="record-tag badge-warn">Imaging</span></div>
+        <div style="display:flex;gap:6px;margin-top:12px;justify-content:center">
+          <button class="btn btn-ghost btn-sm" onclick="showToast('Opening document...')">View</button>
+          <button class="btn btn-ghost btn-sm" onclick="showToast('Downloading...')">⬇</button>
+        </div>
+      </div>
+      <div class="record-card" data-tag="lab">
+        <div class="record-icon">💉</div>
+        <div class="record-name">HbA1c Test Results</div>
+        <div class="record-meta">Mar 18, 2026 · Dr. Nair · PDF</div>
+        <div><span class="record-tag badge-blue">Lab Report</span></div>
+        <div style="display:flex;gap:6px;margin-top:12px;justify-content:center">
+          <button class="btn btn-ghost btn-sm" onclick="showToast('Opening document...')">View</button>
+          <button class="btn btn-ghost btn-sm" onclick="showToast('Downloading...')">⬇</button>
+        </div>
+      </div>
+      <div class="record-card" data-tag="report">
+        <div class="record-icon">📋</div>
+        <div class="record-name">Cardiology Report</div>
+        <div class="record-meta">Mar 18, 2026 · Dr. Sharma · PDF</div>
+        <div><span class="record-tag badge-red">Report</span></div>
+        <div style="display:flex;gap:6px;margin-top:12px;justify-content:center">
+          <button class="btn btn-ghost btn-sm" onclick="showToast('Opening document...')">View</button>
+          <button class="btn btn-ghost btn-sm" onclick="showToast('Downloading...')">⬇</button>
+        </div>
+      </div>
+      <div class="record-card" data-tag="prescription">
+        <div class="record-icon">💊</div>
+        <div class="record-name">Atorvastatin Script</div>
+        <div class="record-meta">Mar 18, 2026 · Dr. Sharma · PDF</div>
+        <div><span class="record-tag badge-green">Prescription</span></div>
+        <div style="display:flex;gap:6px;margin-top:12px;justify-content:center">
+          <button class="btn btn-ghost btn-sm" onclick="showToast('Opening document...')">View</button>
+          <button class="btn btn-ghost btn-sm" onclick="showToast('Downloading...')">⬇</button>
+        </div>
+      </div>
+      <div class="record-card" data-tag="lab">
+        <div class="record-icon">🧬</div>
+        <div class="record-name">Lipid Profile</div>
+        <div class="record-meta">Feb 5, 2026 · Dr. Nair · PDF</div>
+        <div><span class="record-tag badge-blue">Lab Report</span></div>
+        <div style="display:flex;gap:6px;margin-top:12px;justify-content:center">
+          <button class="btn btn-ghost btn-sm" onclick="showToast('Opening document...')">View</button>
+          <button class="btn btn-ghost btn-sm" onclick="showToast('Downloading...')">⬇</button>
+        </div>
+      </div>
+      <div class="record-card" data-tag="imaging">
+        <div class="record-icon">🦷</div>
+        <div class="record-name">Dental X-Ray</div>
+        <div class="record-meta">Feb 5, 2026 · Dr. Rao · JPEG</div>
+        <div><span class="record-tag badge-warn">Imaging</span></div>
+        <div style="display:flex;gap:6px;margin-top:12px;justify-content:center">
+          <button class="btn btn-ghost btn-sm" onclick="showToast('Opening document...')">View</button>
+          <button class="btn btn-ghost btn-sm" onclick="showToast('Downloading...')">⬇</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PROFILE PAGE ===== -->
+  <div class="page" id="page-profile">
+    <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div>
+        <h2>My Profile</h2>
+        <p>Manage your personal health information and account settings</p>
+      </div>
+      <button class="btn btn-primary" onclick="showToast('Profile saved successfully!')">Save Changes</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <!-- Left column -->
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <div class="card">
+          <div class="profile-header">
+            <div class="profile-avatar">AK</div>
+            <div>
+              <div class="profile-name">Arjun Kumar</div>
+              <div class="profile-id">Patient ID: HS-48291 · Member since Jan 2024</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="info-grid">
+              <div class="form-group">
+                <label class="form-label">First Name</label>
+                <input class="form-control" value="Arjun">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Last Name</label>
+                <input class="form-control" value="Kumar">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Date of Birth</label>
+                <input class="form-control" type="date" value="1985-07-14">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Gender</label>
+                <select class="form-control"><option selected>Male</option><option>Female</option><option>Prefer not to say</option></select>
+              </div>
+              <div class="form-group" style="grid-column:1/-1">
+                <label class="form-label">Email</label>
+                <input class="form-control" value="arjun.kumar@email.com">
+              </div>
+              <div class="form-group" style="grid-column:1/-1">
+                <label class="form-label">Phone</label>
+                <input class="form-control" value="+91 98765 43210">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Health Info -->
+        <div class="card">
+          <div class="card-header"><span class="card-title">🏥 Basic Health Information</span></div>
+          <div class="card-body">
+            <div class="info-grid">
+              <div class="form-group">
+                <label class="form-label">Blood Type</label>
+                <select class="form-control"><option>B+</option><option>A+</option><option>O+</option><option>AB+</option></select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Height</label>
+                <input class="form-control" value="175 cm">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Weight</label>
+                <input class="form-control" value="78 kg">
+              </div>
+              <div class="form-group">
+                <label class="form-label">BMI</label>
+                <input class="form-control" value="25.5 (Normal)" readonly style="color:var(--success)">
+              </div>
+              <div class="form-group" style="grid-column:1/-1">
+                <label class="form-label">Chronic Conditions</label>
+                <input class="form-control" value="Type 2 Diabetes, Hypertension">
+              </div>
+              <div class="form-group" style="grid-column:1/-1">
+                <label class="form-label">Allergies</label>
+                <input class="form-control" value="Penicillin, Sulfa drugs">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right column -->
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <!-- Emergency Contacts -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🚨 Emergency Contacts</span>
+            <button class="btn btn-ghost btn-sm" onclick="showToast('Add contact form opened')">+ Add</button>
+          </div>
+          <div class="card-body">
+            <div class="emergency-contacts">
+              <div class="emergency-item">
+                <div class="emergency-icon">👩</div>
+                <div>
+                  <div class="emergency-name">Meena Kumar</div>
+                  <div class="emergency-relation">Spouse · Primary</div>
+                </div>
+                <div class="emergency-phone">+91 98765 11111</div>
+              </div>
+              <div class="emergency-item">
+                <div class="emergency-icon">👨</div>
+                <div>
+                  <div class="emergency-name">Ramesh Kumar</div>
+                  <div class="emergency-relation">Father</div>
+                </div>
+                <div class="emergency-phone">+91 98765 22222</div>
+              </div>
+              <div class="emergency-item">
+                <div class="emergency-icon">👨‍⚕️</div>
+                <div>
+                  <div class="emergency-name">Dr. Rajesh Nair</div>
+                  <div class="emergency-relation">Primary Physician</div>
+                </div>
+                <div class="emergency-phone">+91 98765 33333</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notification Preferences -->
+        <div class="card">
+          <div class="card-header"><span class="card-title">🔔 Notification Preferences</span></div>
+          <div class="card-body">
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div>
+                  <div style="font-size:0.84rem;font-weight:600;color:var(--gray-800)">Medication Reminders</div>
+                  <div style="font-size:0.74rem;color:var(--gray-600)">Push, Email, SMS</div>
+                </div>
+                <label class="toggle"><input type="checkbox" checked onchange="showToast('Preference saved')"> <span class="toggle-slider"></span></label>
+              </div>
+              <div class="divider"></div>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div>
+                  <div style="font-size:0.84rem;font-weight:600;color:var(--gray-800)">Appointment Reminders</div>
+                  <div style="font-size:0.74rem;color:var(--gray-600)">24h and 1h before</div>
+                </div>
+                <label class="toggle"><input type="checkbox" checked onchange="showToast('Preference saved')"> <span class="toggle-slider"></span></label>
+              </div>
+              <div class="divider"></div>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div>
+                  <div style="font-size:0.84rem;font-weight:600;color:var(--gray-800)">Low Stock Alerts</div>
+                  <div style="font-size:0.74rem;color:var(--gray-600)">When supply falls below 7 days</div>
+                </div>
+                <label class="toggle"><input type="checkbox" checked onchange="showToast('Preference saved')"> <span class="toggle-slider"></span></label>
+              </div>
+              <div class="divider"></div>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div>
+                  <div style="font-size:0.84rem;font-weight:600;color:var(--gray-800)">Health Reports</div>
+                  <div style="font-size:0.74rem;color:var(--gray-600)">Weekly summary email</div>
+                </div>
+                <label class="toggle"><input type="checkbox" onchange="showToast('Preference saved')"> <span class="toggle-slider"></span></label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Security -->
+        <div class="card">
+          <div class="card-header"><span class="card-title">🔒 Account Security</span></div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
+            <button class="btn btn-ghost w-full" style="justify-content:flex-start" onclick="showToast('Password reset email sent')">🔑 Change Password</button>
+            <button class="btn btn-ghost w-full" style="justify-content:flex-start" onclick="showToast('2FA setup started')">📱 Two-Factor Authentication</button>
+            <button class="btn btn-ghost w-full" style="justify-content:flex-start" onclick="showToast('Downloading your data...')">⬇️ Download My Data</button>
+            <button class="btn w-full" style="justify-content:flex-start;background:rgba(224,92,92,0.08);color:var(--danger)" onclick="logout()">🚪 Sign Out</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* Toggle Switch */
+.toggle { position: relative; display: inline-block; width: 42px; height: 24px; cursor: pointer; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute; inset: 0; background: var(--gray-200);
+  border-radius: 12px; transition: all var(--transition);
+}
+.toggle-slider::before {
+  content: ''; position: absolute;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #fff; bottom: 3px; left: 3px;
+  transition: all var(--transition);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.toggle input:checked + .toggle-slider { background: var(--teal); }
+.toggle input:checked + .toggle-slider::before { transform: translateX(18px); }
+</style>
+
+<script>
+  // ===== NAVIGATION =====
+  function navigate(page, el) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+    document.getElementById('page-' + page).classList.add('active');
+    if (el) el.classList.add('active');
+
+    const titles = {
+      dashboard: 'Dashboard', appointments: 'Appointments',
+      medications: 'Medication Tracker', records: 'Health Records',
+      profile: 'My Profile'
+    };
+    document.getElementById('topbar-title').textContent = titles[page] || page;
+    window.scrollTo(0, 0);
+  }
+
+  function goToAuth(tab) {
+    document.body.classList.remove('landing-mode');
+    document.body.classList.add('auth-mode');
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-auth').classList.add('active');
+    switchAuthTab(tab);
+  }
+
+  function goToDashboard() {
+    document.body.classList.remove('landing-mode', 'auth-mode');
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-dashboard').classList.add('active');
+    document.getElementById('topbar-title').textContent = 'Dashboard';
+    showToast('Welcome back, Arjun! 👋');
+  }
+
+  function goToLanding() {
+    document.body.classList.add('landing-mode');
+    document.body.classList.remove('auth-mode');
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-landing').classList.add('active');
+  }
+
+  function logout() {
+    goToLanding();
+    showToast('Signed out successfully');
+  }
+
+  function switchAuthTab(tab) {
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.auth-form-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    document.getElementById('auth-' + tab).classList.add('active');
+  }
+
+  // ===== TOAST =====
+  function showToast(msg, type) {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.style.background = type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--danger)' : 'var(--gray-800)';
+    toast.textContent = msg;
+    container.appendChild(toast);
+    setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(20px)'; toast.style.transition = '0.3s'; setTimeout(() => toast.remove(), 300); }, 3000);
+  }
+
+  // ===== MODAL =====
+  function openModal(title, html) {
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-body').innerHTML = html;
+    document.getElementById('modal-overlay').classList.add('open');
+  }
+  function closeModal(e) { if (e.target === document.getElementById('modal-overlay')) closeModalDirect(); }
+  function closeModalDirect() { document.getElementById('modal-overlay').classList.remove('open'); }
+
+  // ===== ACTIONS =====
+  function showNewApptModal() {
+    openModal('Schedule Appointment', `
+      <div class="form-group"><label class="form-label">Doctor</label>
+        <select class="form-control"><option>Dr. Priya Sharma — Cardiology</option><option>Dr. Rajesh Nair — General Medicine</option><option>Dr. Anita Gupta — Ophthalmology</option></select></div>
+      <div class="form-group"><label class="form-label">Date</label><input class="form-control" type="date"></div>
+      <div class="form-group"><label class="form-label">Time</label><select class="form-control"><option>10:00 AM</option><option>11:00 AM</option><option>2:00 PM</option><option>3:00 PM</option></select></div>
+      <div class="form-group"><label class="form-label">Reason</label><textarea class="form-control" placeholder="Describe your concern..."></textarea></div>
+      <button class="btn btn-primary w-full" style="justify-content:center;margin-top:8px" onclick="closeModalDirect();showToast('✅ Appointment scheduled!')">Confirm Appointment</button>
+    `);
+  }
+
+  function showAddMedModal() {
+    openModal('Add Medication', `
+      <div class="form-group"><label class="form-label">Medication Name</label><input class="form-control" placeholder="e.g. Aspirin"></div>
+      <div class="form-group"><label class="form-label">Dosage</label><input class="form-control" placeholder="e.g. 100mg"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group"><label class="form-label">Frequency</label><select class="form-control"><option>Once daily</option><option>Twice daily</option><option>Three times daily</option><option>As needed</option></select></div>
+        <div class="form-group"><label class="form-label">Reminder Time</label><input class="form-control" type="time" value="08:00"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Prescribed by</label><input class="form-control" placeholder="Doctor's name"></div>
+      <div class="form-group"><label class="form-label">Supply (days)</label><input class="form-control" type="number" placeholder="30"></div>
+      <button class="btn btn-primary w-full" style="justify-content:center;margin-top:8px" onclick="closeModalDirect();showToast('💊 Medication added successfully!')">Add Medication</button>
+    `);
+  }
+
+  function cancelAppt(btn) {
+    if (confirm('Are you sure you want to cancel this appointment?')) {
+      btn.closest('.appt-full-item').style.opacity = '0.4';
+      showToast('Appointment cancelled');
+    }
+  }
+
+  function bookAppt() { showToast('✅ Appointment scheduled successfully!'); }
+  function markAllRead() { showToast('All notifications marked as read'); }
+
+  // ===== RECORDS FILTER =====
+  function setFilter(el, tag) {
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    document.querySelectorAll('.record-card').forEach(card => {
+      card.style.display = (tag === 'all' || card.dataset.tag === tag) ? '' : 'none';
+    });
+  }
+
+  function filterRecords(val) {
+    document.querySelectorAll('.record-card').forEach(card => {
+      const name = card.querySelector('.record-name').textContent.toLowerCase();
+      card.style.display = name.includes(val.toLowerCase()) ? '' : 'none';
+    });
+  }
+
+  // ===== KEYBOARD ESC =====
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalDirect(); });
+</script>
+</body>
+</html>
