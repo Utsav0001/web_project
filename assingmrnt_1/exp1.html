@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Personal Portfolio</title>
+
+<style>
+body{
+font-family: Arial, sans-serif;
+margin:0;
+background:#f4f6f8;
+color:#333;
+}
+
+header{
+background:#2c3e50;
+color:white;
+padding:20px;
+text-align:center;
+}
+
+nav{
+background:#34495e;
+text-align:center;
+padding:10px;
+}
+
+nav a{
+color:white;
+margin:0 15px;
+text-decoration:none;
+font-weight:bold;
+}
+
+section{
+padding:40px;
+margin:20px;
+background:white;
+border-radius:8px;
+box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
+h2{
+color:#2c3e50;
+}
+
+.skills li{
+background:#ecf0f1;
+padding:10px;
+margin:5px 0;
+border-radius:5px;
+}
+
+.project{
+border:1px solid #ddd;
+padding:15px;
+margin-top:10px;
+border-radius:6px;
+}
+
+button{
+background:#2c3e50;
+color:white;
+border:none;
+padding:10px 15px;
+border-radius:5px;
+cursor:pointer;
+margin-top:10px;
+}
+
+button:hover{
+background:#1a252f;
+}
+
+form input,form textarea{
+width:100%;
+padding:10px;
+margin-top:10px;
+border:1px solid #ccc;
+border-radius:5px;
+}
+
+footer{
+background:#2c3e50;
+color:white;
+text-align:center;
+padding:15px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>Utsav</h1>
+<p>Web Developer | Student | Tech Enthusiast</p>
+</header>
+
+<nav>
+<a href="#about">About</a>
+<a href="#skills">Skills</a>
+<a href="#projects">Projects</a>
+<a href="#contact">Contact</a>
+</nav>
+
+<section>
+<h2>Welcome</h2>
+<p>Welcome to my personal portfolio website.</p>
+<button onclick="thankYou()">Click Me</button>
+</section>
+
+<section id="about">
+<h2>About Me</h2>
+<p>I am a student interested in web development, programming and technology projects. I enjoy building interactive applications and learning new skills.</p>
+</section>
+
+<section id="skills">
+<h2>Skills</h2>
+<ul class="skills">
+<li>HTML</li>
+<li>CSS</li>
+<li>JavaScript</li>
+</ul>
+</section>
+
+<section id="projects">
+<h2>Projects</h2>
+
+<div class="project">
+<h3>HealthSync</h3>
+<p>A smart digital health management system for tracking health data.</p>
+</div>
+
+<div class="project">
+<h3>Environmental Checker</h3>
+<p>Python-based project analyzing air quality, water availability and forests.</p>
+</div>
+
+</section>
+
+<section id="contact">
+<h2>Contact</h2>
+
+<form onsubmit="submitForm(event)">
+<input type="text" id="name" placeholder="Name" required>
+<input type="email" id="email" placeholder="Email" required>
+<textarea id="message" placeholder="Message" required></textarea>
+<button type="submit">Submit</button>
+</form>
+
+<p id="confirm"></p>
+
+</section>
+
+<footer>
+<p>© 2026 Personal Portfolio</p>
+</footer>
+
+<script>
+function thankYou(){
+alert("Thank you for visiting!");
+}
+
+function submitForm(e){
+e.preventDefault();
+document.getElementById("confirm").innerText="Message submitted successfully!";
+}
+</script>
+
+</body>
+</html>
