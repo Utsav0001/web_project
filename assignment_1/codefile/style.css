@@ -1,0 +1,342 @@
+:root{
+    --primary:#6366f1;
+    --primary-dark:#4f46e5;
+    --success:#22c55e;
+    --warning:#f59e0b;
+    --danger:#ef4444;
+    --text:#ffffff;
+    --muted:#cbd5f5;
+    --radius:14px;
+}
+
+/* RESET */
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+/* BACKGROUND */
+
+body{
+    font-family:"Inter",sans-serif;
+
+    background:
+    linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.45)),
+    url("https://s3.amazonaws.com/eap04.easyagentpro.com-live/wp-content/uploads/sites/165/2023/10/27125126/Discipline.jpg");
+
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+    background-attachment:fixed;
+
+    min-height:100vh;
+    color:white;
+}
+
+/* APP CONTAINER */
+
+.app-shell{
+    max-width:1100px;
+    margin:auto;
+    padding:40px 20px;
+}
+
+.todo-app{
+    display:grid;
+    gap:22px;
+}
+
+/* HERO */
+
+.hero{
+    text-align:center;
+}
+
+.hero h1{
+    font-size:2.8rem;
+    font-weight:700;
+}
+
+.subtitle{
+    color:#e2e8f0;
+}
+
+/* GLASS PANELS */
+
+.panel{
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(12px);
+    border:1px solid rgba(255,255,255,0.2);
+    border-radius:var(--radius);
+    padding:22px;
+    box-shadow:0 8px 30px rgba(0,0,0,0.3);
+    color:white;
+}
+
+/* FORM */
+
+.task-form{
+    display:grid;
+    gap:16px;
+}
+
+.field-group{
+    display:grid;
+    gap:6px;
+}
+
+input,textarea{
+    background:rgba(255,255,255,0.15);
+    border:1px solid rgba(255,255,255,0.3);
+    border-radius:10px;
+    padding:12px;
+    color:white;
+    font-size:14px;
+}
+
+input::placeholder,
+textarea::placeholder{
+    color:#e2e8f0;
+}
+
+input:focus,
+textarea:focus{
+    outline:none;
+    border-color:var(--primary);
+    box-shadow:0 0 0 2px rgba(99,102,241,0.4);
+}
+
+/* SELECT DROPDOWN */
+
+select{
+    background:rgba(255,255,255,0.15);
+    border:1px solid rgba(255,255,255,0.3);
+    border-radius:10px;
+    padding:12px;
+    color:black;
+}
+
+/* DROPDOWN OPTIONS */
+
+option{
+    color:black;
+    background:white;
+}
+
+/* BUTTONS */
+
+.primary-btn{
+    background:linear-gradient(135deg,#6366f1,#8b5cf6);
+    border:none;
+    padding:12px 20px;
+    border-radius:10px;
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.25s;
+}
+
+.primary-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 6px 18px rgba(99,102,241,0.5);
+}
+
+.secondary-btn{
+    background:rgba(255,255,255,0.2);
+    border:none;
+    padding:12px 20px;
+    border-radius:10px;
+    color:white;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.secondary-btn:hover{
+    background:rgba(255,255,255,0.35);
+}
+
+/* TOOLBAR */
+
+.toolbar-panel{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:14px;
+    flex-wrap:wrap;
+}
+
+.search-box input{
+    width:260px;
+}
+
+/* FILTER */
+
+.filter-group{
+    display:flex;
+    gap:8px;
+}
+
+.filter-btn{
+    background:rgba(255,255,255,0.15);
+    border:none;
+    padding:8px 16px;
+    border-radius:20px;
+    color:white;
+    cursor:pointer;
+}
+
+.filter-btn.active{
+    background:var(--primary);
+}
+
+/* STATS */
+
+.stats-panel{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+}
+
+.stat-label{
+    font-size:12px;
+    color:#cbd5f5;
+}
+
+/* TASK LIST */
+
+.task-list{
+    list-style:none;
+    display:grid;
+    gap:12px;
+}
+
+/* TASK ITEM */
+
+.task-item{
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    gap:16px;
+    padding:16px;
+    border-radius:12px;
+    background:rgba(255,255,255,0.12);
+    border:1px solid rgba(255,255,255,0.25);
+    backdrop-filter:blur(10px);
+    transition:0.2s;
+}
+
+.task-item:hover{
+    transform:translateY(-3px);
+    box-shadow:0 6px 18px rgba(0,0,0,0.4);
+}
+
+/* CHECKBOX */
+
+.checkbox-ui{
+    width:20px;
+    height:20px;
+    border-radius:50%;
+    border:2px solid white;
+    display:inline-block;
+}
+
+.task-checkbox{
+    display:none;
+}
+
+.task-checkbox:checked + .checkbox-ui{
+    background:var(--success);
+    border-color:var(--success);
+}
+
+/* TASK CONTENT */
+
+.task-title{
+    font-size:16px;
+    font-weight:600;
+}
+
+.task-description{
+    margin:6px 0;
+    color:#e2e8f0;
+}
+
+.task-date{
+    font-size:12px;
+    color:#cbd5f5;
+}
+
+.task-item.completed .task-title{
+    text-decoration:line-through;
+    opacity:0.6;
+}
+
+/* PRIORITY */
+
+.priority-badge{
+    font-size:12px;
+    font-weight:600;
+    padding:4px 10px;
+    border-radius:20px;
+}
+
+.priority-low{
+    background:#22c55e;
+}
+
+.priority-medium{
+    background:#f59e0b;
+}
+
+.priority-high{
+    background:#ef4444;
+}
+
+/* ACTION BUTTONS */
+
+.task-actions{
+    display:flex;
+    gap:6px;
+}
+
+.icon-btn{
+    border:none;
+    background:rgba(255,255,255,0.2);
+    padding:6px 10px;
+    border-radius:8px;
+    color:white;
+    cursor:pointer;
+}
+
+.icon-btn:hover{
+    background:rgba(255,255,255,0.35);
+}
+
+/* EMPTY */
+
+.empty-state{
+    text-align:center;
+    color:#cbd5f5;
+    padding:30px;
+}
+
+/* MOBILE */
+
+@media(max-width:700px){
+
+.task-item{
+grid-template-columns:auto 1fr;
+}
+
+.task-actions{
+grid-column:1/-1;
+}
+
+.toolbar-panel{
+flex-direction:column;
+align-items:flex-start;
+}
+
+}
