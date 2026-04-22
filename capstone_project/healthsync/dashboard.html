@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard — HealthSync{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- STATS -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon blue"><i class="fas fa-calendar-check"></i></div>
+    <div>
+      <div class="stat-num">{{ total_appointments }}</div>
+      <div class="stat-label">Total Appointments</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon green"><i class="fas fa-pills"></i></div>
+    <div>
+      <div class="stat-num">{{ active_meds }}</div>
+      <div class="stat-label">Active Medications</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon orange"><i class="fas fa-folder-medical"></i></div>
+    <div>
+      <div class="stat-num">{{ total_records }}</div>
+      <div class="stat-label">Health Records</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon purple"><i class="fas fa-shield-alt"></i></div>
+    <div>
+      <div class="stat-num" style="font-size:16px;font-weight:700;color:var(--accent);">Secure</div>
+      <div class="stat-label">Data Protected</div>
+    </div>
+  </div>
+</div>
+
+<!-- GREETING -->
+<div class="card" style="margin-bottom:24px;background:linear-gradient(135deg,#EFF6FF,#ECFDF5);border-color:#BAE6FD;">
+  <div class="card-body" style="padding:24px 28px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div style="font-family:'Sora',sans-serif;font-size:20px;font-weight:700;margin-bottom:4px;">Good day, {{ user.name.split()[0] }}! 👋</div>
+        <div style="color:var(--text-muted);font-size:14px;">{{ today }} · Here's your health summary</div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <a href="/appointments" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> New Appointment</a>
+        <a href="/medications" class="btn btn-outline btn-sm"><i class="fas fa-plus"></i> Add Medication</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="grid-2">
+  <!-- UPCOMING APPOINTMENTS -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><i class="fas fa-calendar-check" style="color:var(--primary);margin-right:8px;"></i>Upcoming Appointments</div>
+      <a href="/appointments" class="btn btn-ghost btn-sm">View All</a>
+    </div>
+    <div class="card-body" style="padding:0;">
+      {% if upcoming %}
+        {% for appt in upcoming %}
+        <div style="display:flex;align-items:center;gap:14px;padding:16px 20px;border-bottom:1px solid var(--border-light);" class="appt-row">
+          <div style="width:44px;height:44px;border-radius:10px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i class="fas fa-user-md" style="color:var(--primary);font-size:18px;"></i>
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Dr. {{ appt.doctor_name }}</div>
+            <div style="font-size:12px;color:var(--text-muted);">{{ appt.specialty or 'General' }} · {{ appt.hospital or '' }}</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <div style="font-size:12px;font-weight:600;color:var(--primary);">{{ appt.appointment_date }}</div>
+            <div style="font-size:12px;color:var(--text-muted);">{{ appt.appointment_time }}</div>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="empty-state" style="padding:32px;">
+          <i class="fas fa-calendar-plus"></i>
+          <h3>No upcoming appointments</h3>
+          <p>Schedule your first appointment</p>
+          <a href="/appointments" class="btn btn-primary btn-sm" style="margin-top:12px;">Book Now</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- MEDICATIONS -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><i class="fas fa-pills" style="color:var(--accent);margin-right:8px;"></i>Active Medications</div>
+      <a href="/medications" class="btn btn-ghost btn-sm">View All</a>
+    </div>
+    <div class="card-body" style="padding:0;">
+      {% if medications %}
+        {% for med in medications %}
+        <div style="display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--border-light);">
+          <div style="width:40px;height:40px;border-radius:10px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i class="fas fa-capsules" style="color:var(--accent);font-size:16px;"></i>
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-weight:600;font-size:14px;">{{ med.medicine_name }}</div>
+            <div style="font-size:12px;color:var(--text-muted);">{{ med.dosage }} · {{ med.frequency }}</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <span class="badge badge-primary" style="font-size:11px;">{{ med.reminder_time }}</span>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="empty-state" style="padding:32px;">
+          <i class="fas fa-pills"></i>
+          <h3>No medications</h3>
+          <p>Add your medications to track them</p>
+          <a href="/medications" class="btn btn-success btn-sm" style="margin-top:12px;">Add Medicine</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATIONS -->
+{% if notifications %}
+<div class="card" style="margin-top:24px;">
+  <div class="card-header">
+    <div class="card-title"><i class="fas fa-bell" style="color:var(--warning);margin-right:8px;"></i>Recent Notifications</div>
+    <button class="btn btn-ghost btn-sm" onclick="fetch('/api/notifications/mark-read',{method:'POST'});document.querySelectorAll('.notif-badge').forEach(e=>e.remove());">Mark All Read</button>
+  </div>
+  <div class="card-body" style="padding:0;">
+    {% for notif in notifications %}
+    <div style="display:flex;align-items:flex-start;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border-light);{% if not notif.is_read %}background:var(--primary-light);{% endif %}">
+      <div style="width:32px;height:32px;border-radius:8px;background:{% if notif.type=='success' %}var(--accent-light){% elif notif.type=='appointment' %}var(--primary-light){% elif notif.type=='medication' %}#FEF3C7{% else %}var(--border-light){% endif %};display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">
+        <i class="fas fa-{% if notif.type=='success' %}check{% elif notif.type=='appointment' %}calendar{% elif notif.type=='medication' %}pills{% else %}info{% endif %}" style="font-size:12px;color:{% if notif.type=='success' %}var(--accent){% elif notif.type=='appointment' %}var(--primary){% elif notif.type=='medication' %}var(--warning){% else %}var(--text-muted){% endif %};"></i>
+      </div>
+      <div style="flex:1;">
+        <div style="font-size:13px;line-height:1.5;">{{ notif.message }}</div>
+        <div style="font-size:11px;color:var(--text-light);margin-top:3px;">{{ notif.created_at[:16] }}</div>
+      </div>
+      {% if not notif.is_read %}<div style="width:8px;height:8px;border-radius:50%;background:var(--primary);flex-shrink:0;margin-top:6px;"></div>{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- Quick Health Tips -->
+<div class="card" style="margin-top:24px;background:linear-gradient(135deg,#F0FFFE,#F0F9FF);border-color:#99F6E4;">
+  <div class="card-body" style="padding:24px 28px;">
+    <div style="font-family:'Sora',sans-serif;font-weight:600;font-size:15px;margin-bottom:12px;color:var(--text);">💡 Quick Health Tips</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;">
+      <div style="background:rgba(255,255,255,.7);border-radius:10px;padding:14px;font-size:13px;color:var(--text-muted);">
+        <div style="font-weight:600;color:var(--text);margin-bottom:4px;">💧 Stay Hydrated</div>Drink at least 8 glasses of water daily for optimal health.
+      </div>
+      <div style="background:rgba(255,255,255,.7);border-radius:10px;padding:14px;font-size:13px;color:var(--text-muted);">
+        <div style="font-weight:600;color:var(--text);margin-bottom:4px;">🏃 Stay Active</div>Even 30 minutes of walking a day improves health significantly.
+      </div>
+      <div style="background:rgba(255,255,255,.7);border-radius:10px;padding:14px;font-size:13px;color:var(--text-muted);">
+        <div style="font-weight:600;color:var(--text);margin-bottom:4px;">💊 Take Medicines</div>Always take your medications on schedule for best results.
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

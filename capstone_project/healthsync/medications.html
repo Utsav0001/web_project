@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+{% block title %}Medications — HealthSync{% endblock %}
+{% block page_title %}Medications{% endblock %}
+
+{% block content %}
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+  <div>
+    <div style="font-family:'Sora',sans-serif;font-size:18px;font-weight:700;">Medication Tracker</div>
+    <div style="color:var(--text-muted);font-size:13px;">Manage your medicines and reminders</div>
+  </div>
+  <button class="btn btn-success" onclick="openModal('addMedModal')">
+    <i class="fas fa-plus"></i> Add Medication
+  </button>
+</div>
+
+<!-- Current Time Reminder Widget -->
+<div class="card" style="margin-bottom:20px;background:linear-gradient(135deg,#ECFDF5,#F0F9FF);border-color:#6EE7B7;" id="reminderWidget">
+  <div class="card-body" style="padding:16px 20px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:40px;height:40px;border-radius:10px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;"><i class="fas fa-clock"></i></div>
+        <div>
+          <div style="font-weight:600;font-size:15px;" id="currentTimeDisplay">Loading...</div>
+          <div style="font-size:12px;color:var(--text-muted);" id="nextReminderText">Checking next reminder...</div>
+        </div>
+      </div>
+      <div id="dueNowBadge" style="display:none;" class="badge badge-warning"><i class="fas fa-bell"></i> Medicine Due Now!</div>
+    </div>
+  </div>
+</div>
+
+<!-- Meds Grid -->
+{% if medications %}
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;">
+  {% for med in medications %}
+  <div class="med-card card {% if not med.is_active %}inactive-med{% endif %}">
+    <div class="card-body" style="padding:20px;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:44px;height:44px;border-radius:12px;background:{% if med.is_active %}linear-gradient(135deg,var(--accent),#0D9488){% else %}var(--border-light){% endif %};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i class="fas fa-capsules" style="color:{% if med.is_active %}#fff{% else %}var(--text-light){% endif %};font-size:18px;"></i>
+          </div>
+          <div>
+            <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:15px;{% if not med.is_active %}color:var(--text-muted);{% endif %}">{{ med.medicine_name }}</div>
+            <div style="font-size:12px;color:var(--text-light);">{{ med.dosage }}</div>
+          </div>
+        </div>
+        {% if med.is_active %}<span class="badge badge-success"><i class="fas fa-circle" style="font-size:7px;"></i> Active</span>
+        {% else %}<span class="badge badge-gray">Paused</span>{% endif %}
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+        <div style="background:var(--bg);border-radius:8px;padding:10px;text-align:center;">
+          <div style="font-size:10px;color:var(--text-light);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;">Frequency</div>
+          <div style="font-size:13px;font-weight:600;color:var(--text);">{{ med.frequency }}</div>
+        </div>
+        <div style="background:var(--primary-light);border-radius:8px;padding:10px;text-align:center;">
+          <div style="font-size:10px;color:var(--primary-dark);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;">Reminder</div>
+          <div style="font-size:14px;font-weight:700;color:var(--primary);">{{ med.reminder_time }}</div>
+        </div>
+      </div>
+      {% if med.instructions %}
+      <div style="background:var(--bg);border-radius:8px;padding:10px;margin-bottom:14px;font-size:12px;color:var(--text-muted);">
+        <i class="fas fa-info-circle" style="margin-right:5px;"></i>{{ med.instructions }}
+      </div>
+      {% endif %}
+      {% if med.start_date or med.end_date %}
+      <div style="font-size:12px;color:var(--text-light);margin-bottom:14px;">
+        {% if med.start_date %}<span><i class="fas fa-play" style="font-size:9px;"></i> {{ med.start_date }}</span>{% endif %}
+        {% if med.end_date %}<span style="margin-left:10px;"><i class="fas fa-stop" style="font-size:9px;"></i> {{ med.end_date }}</span>{% endif %}
+      </div>
+      {% endif %}
+      <div style="display:flex;gap:8px;">
+        <form method="POST" action="/medications/toggle/{{ med.id }}" style="flex:1;">
+          <button type="submit" class="btn btn-sm {% if med.is_active %}btn-ghost{% else %}btn-success{% endif %}" style="width:100%;">
+            <i class="fas fa-{% if med.is_active %}pause{% else %}play{% endif %}"></i>
+            {% if med.is_active %}Pause{% else %}Resume{% endif %}
+          </button>
+        </form>
+        <form method="POST" action="/medications/delete/{{ med.id }}" onsubmit="return confirm('Remove this medication?')">
+          <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card">
+  <div class="empty-state" style="padding:64px 32px;">
+    <i class="fas fa-pills"></i>
+    <h3>No medications added</h3>
+    <p>Add your medications to track dosages and set reminders</p>
+    <button class="btn btn-success" style="margin-top:16px;" onclick="openModal('addMedModal')"><i class="fas fa-plus"></i> Add Medication</button>
+  </div>
+</div>
+{% endif %}
+
+<!-- ADD MEDICATION MODAL -->
+<div class="modal-overlay" id="addMedModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title"><i class="fas fa-pills" style="color:var(--accent);margin-right:8px;"></i>Add Medication</div>
+      <button class="modal-close" onclick="closeModal('addMedModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <form method="POST" action="/medications/add">
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Medicine Name *</label>
+          <input type="text" name="medicine_name" class="form-control" placeholder="e.g., Metformin, Paracetamol" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Dosage *</label>
+            <input type="text" name="dosage" class="form-control" placeholder="e.g., 500mg, 1 tablet" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Frequency *</label>
+            <select name="frequency" class="form-control" required>
+              <option value="">Select frequency</option>
+              <option>Once daily</option>
+              <option>Twice daily</option>
+              <option>Three times daily</option>
+              <option>Four times daily</option>
+              <option>Every 8 hours</option>
+              <option>Every 12 hours</option>
+              <option>Weekly</option>
+              <option>As needed</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Reminder Time *</label>
+          <input type="time" name="reminder_time" class="form-control" required>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:4px;"><i class="fas fa-info-circle"></i> You'll receive a browser notification at this time</div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Start Date</label>
+            <input type="date" name="start_date" class="form-control">
+          </div>
+          <div class="form-group">
+            <label class="form-label">End Date</label>
+            <input type="date" name="end_date" class="form-control">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Special Instructions</label>
+          <textarea name="instructions" class="form-control" placeholder="e.g., Take after food, Avoid sunlight, etc."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('addMedModal')">Cancel</button>
+        <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i> Add Medication</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_style %}
+<style>
+.inactive-med { opacity:.65; }
+.med-card { transition:.2s; }
+.med-card:hover { box-shadow:0 4px 20px rgba(0,0,0,.08); transform:translateY(-2px); }
+</style>
+{% endblock %}
+
+{% block extra_script %}
+<script>
+function updateClock() {
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit'});
+  const dateStr = now.toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric'});
+  document.getElementById('currentTimeDisplay').textContent = `${timeStr} · ${dateStr}`;
+}
+updateClock();
+setInterval(updateClock, 10000);
+
+// Check if any medicine is due
+(async function() {
+  const res = await fetch('/api/reminders/check');
+  const data = await res.json();
+  if (data.reminders.length > 0) {
+    document.getElementById('dueNowBadge').style.display = 'inline-flex';
+    document.getElementById('nextReminderText').textContent = `Due now: ${data.reminders.map(r=>r.name).join(', ')}`;
+  } else {
+    const r2 = await fetch('/api/upcoming-reminders');
+    const d2 = await r2.json();
+    if (d2.upcoming.length > 0) {
+      document.getElementById('nextReminderText').textContent = `Next: ${d2.upcoming[0].name} at ${d2.upcoming[0].time}`;
+    } else {
+      document.getElementById('nextReminderText').textContent = 'No more reminders today';
+    }
+  }
+})();
+</script>
+{% endblock %}
