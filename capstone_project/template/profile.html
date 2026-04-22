@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+{% block title %}Profile — HealthSync{% endblock %}
+{% block page_title %}Profile{% endblock %}
+
+{% block content %}
+<div style="max-width:800px;">
+  <!-- Profile Header -->
+  <div class="card" style="margin-bottom:24px;overflow:visible;">
+    <div style="background:linear-gradient(135deg,#0EA5E9,#0D9488);height:120px;border-radius:12px 12px 0 0;position:relative;">
+      <div style="position:absolute;bottom:-40px;left:28px;width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));border:4px solid #fff;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Sora',sans-serif;font-size:28px;font-weight:700;box-shadow:0 4px 16px rgba(0,0,0,.15);">
+        {{ user.name[0]|upper if user.name else 'U' }}
+      </div>
+    </div>
+    <div style="padding:52px 28px 24px;">
+      <div style="font-family:'Sora',sans-serif;font-size:22px;font-weight:700;">{{ user.name }}</div>
+      <div style="color:var(--text-muted);font-size:14px;margin-top:2px;margin-bottom:12px;">{{ user.email }}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;">
+        {% if user.blood_group %}<span class="badge badge-danger"><i class="fas fa-tint"></i> {{ user.blood_group }}</span>{% endif %}
+        {% if user.gender %}<span class="badge badge-primary">{{ user.gender }}</span>{% endif %}
+        {% if user.dob %}<span class="badge badge-gray"><i class="fas fa-birthday-cake" style="font-size:9px;"></i> {{ user.dob }}</span>{% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div style="display:flex;gap:4px;margin-bottom:20px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px;">
+    <button class="profile-tab active" onclick="showTab('personal',this)">Personal Info</button>
+    <button class="profile-tab" onclick="showTab('health',this)">Health Details</button>
+    <button class="profile-tab" onclick="showTab('emergency',this)">Emergency Contact</button>
+    <button class="profile-tab" onclick="showTab('security',this)">Security</button>
+  </div>
+
+  <form method="POST" action="/profile" id="profileForm">
+    <!-- PERSONAL INFO TAB -->
+    <div class="tab-pane" id="tab-personal">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-user" style="color:var(--primary);margin-right:8px;"></i>Personal Information</div>
+        </div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Full Name</label>
+              <input type="text" name="name" class="form-control" value="{{ user.name or '' }}" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phone Number</label>
+              <input type="tel" name="phone" class="form-control" value="{{ user.phone or '' }}">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Date of Birth</label>
+              <input type="date" name="dob" class="form-control" value="{{ user.dob or '' }}">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Gender</label>
+              <select name="gender" class="form-control">
+                <option value="">Select gender</option>
+                <option {% if user.gender=='Male' %}selected{% endif %}>Male</option>
+                <option {% if user.gender=='Female' %}selected{% endif %}>Female</option>
+                <option {% if user.gender=='Other' %}selected{% endif %}>Other</option>
+                <option {% if user.gender=='Prefer not to say' %}selected{% endif %}>Prefer not to say</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Address</label>
+            <textarea name="address" class="form-control" placeholder="Your home address">{{ user.address or '' }}</textarea>
+          </div>
+          <!-- Hidden fields for other tabs -->
+          <input type="hidden" name="blood_group" id="blood_group_h" value="{{ user.blood_group or '' }}">
+          <input type="hidden" name="allergies" id="allergies_h" value="{{ user.allergies or '' }}">
+          <input type="hidden" name="chronic_conditions" id="chronic_h" value="{{ user.chronic_conditions or '' }}">
+          <input type="hidden" name="emergency_contact_name" id="ec_name_h" value="{{ user.emergency_contact_name or '' }}">
+          <input type="hidden" name="emergency_contact_phone" id="ec_phone_h" value="{{ user.emergency_contact_phone or '' }}">
+        </div>
+      </div>
+      <div style="margin-top:16px;display:flex;justify-content:flex-end;">
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Changes</button>
+      </div>
+    </div>
+
+    <!-- HEALTH DETAILS TAB -->
+    <div class="tab-pane hidden" id="tab-health">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-heartbeat" style="color:var(--danger);margin-right:8px;"></i>Health Details</div>
+        </div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label">Blood Group</label>
+            <select name="blood_group_real" class="form-control" onchange="document.getElementById('blood_group_h').value=this.value">
+              <option value="">Select blood group</option>
+              {% for bg in ['A+','A-','B+','B-','AB+','AB-','O+','O-'] %}
+              <option {% if user.blood_group==bg %}selected{% endif %}>{{ bg }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Known Allergies</label>
+            <textarea name="allergies_real" class="form-control" placeholder="List any known allergies, e.g., Penicillin, Peanuts..." onchange="document.getElementById('allergies_h').value=this.value">{{ user.allergies or '' }}</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Chronic Conditions</label>
+            <textarea name="chronic_real" class="form-control" placeholder="List any chronic conditions, e.g., Diabetes, Hypertension..." onchange="document.getElementById('chronic_h').value=this.value">{{ user.chronic_conditions or '' }}</textarea>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:16px;display:flex;justify-content:flex-end;">
+        <button type="submit" class="btn btn-primary" onclick="syncHealthFields()"><i class="fas fa-save"></i> Save Changes</button>
+      </div>
+    </div>
+
+    <!-- EMERGENCY CONTACT TAB -->
+    <div class="tab-pane hidden" id="tab-emergency">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-phone-alt" style="color:var(--danger);margin-right:8px;"></i>Emergency Contact</div>
+        </div>
+        <div class="card-body">
+          <div style="background:var(--danger-light);border:1px solid #FCA5A5;border-radius:10px;padding:14px;margin-bottom:20px;font-size:13px;color:#991B1B;display:flex;gap:10px;align-items:flex-start;">
+            <i class="fas fa-exclamation-triangle" style="margin-top:2px;"></i>
+            <span>This contact will be shown in case of a medical emergency. Please keep this information up to date.</span>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Contact Name</label>
+              <input type="text" name="ec_name_real" class="form-control" value="{{ user.emergency_contact_name or '' }}" placeholder="e.g., Jane Doe" onchange="document.getElementById('ec_name_h').value=this.value">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Contact Phone</label>
+              <input type="tel" name="ec_phone_real" class="form-control" value="{{ user.emergency_contact_phone or '' }}" placeholder="+91 9876543210" onchange="document.getElementById('ec_phone_h').value=this.value">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:16px;display:flex;justify-content:flex-end;">
+        <button type="submit" class="btn btn-primary" onclick="syncEmergencyFields()"><i class="fas fa-save"></i> Save Changes</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- SECURITY TAB -->
+  <div class="tab-pane hidden" id="tab-security">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="fas fa-lock" style="color:var(--warning);margin-right:8px;"></i>Change Password</div>
+      </div>
+      <div class="card-body">
+        <form method="POST" action="/profile/change-password">
+          <div class="form-group">
+            <label class="form-label">Current Password</label>
+            <input type="password" name="current_password" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">New Password</label>
+            <input type="password" name="new_password" class="form-control" required minlength="6">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirm New Password</label>
+            <input type="password" id="confirmPw" class="form-control" required minlength="6">
+          </div>
+          <button type="submit" class="btn btn-primary"><i class="fas fa-key"></i> Change Password</button>
+        </form>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px;">
+      <div class="card-header">
+        <div class="card-title"><i class="fas fa-info-circle" style="color:var(--primary);margin-right:8px;"></i>Account Info</div>
+      </div>
+      <div class="card-body">
+        <div style="display:grid;gap:12px;">
+          <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border-light);font-size:14px;">
+            <span style="color:var(--text-muted);">Email Address</span>
+            <span style="font-weight:500;">{{ user.email }}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border-light);font-size:14px;">
+            <span style="color:var(--text-muted);">Member Since</span>
+            <span style="font-weight:500;">{{ user.created_at[:10] }}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:12px 0;font-size:14px;">
+            <span style="color:var(--text-muted);">Account Status</span>
+            <span class="badge badge-success"><i class="fas fa-circle" style="font-size:7px;"></i> Active</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_style %}
+<style>
+.profile-tab { flex:1; padding:8px 12px; border:none; background:transparent; border-radius:8px; font-size:13px; font-weight:500; cursor:pointer; color:var(--text-muted); transition:.2s; font-family:inherit; }
+.profile-tab:hover { color:var(--text); background:var(--bg); }
+.profile-tab.active { background:var(--primary); color:#fff; }
+.tab-pane.hidden { display:none; }
+</style>
+{% endblock %}
+
+{% block extra_script %}
+<script>
+function showTab(name, btn) {
+  document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + name).classList.remove('hidden');
+}
+function syncHealthFields() {
+  const bg = document.querySelector('[name="blood_group_real"]');
+  const al = document.querySelector('[name="allergies_real"]');
+  const ch = document.querySelector('[name="chronic_real"]');
+  if (bg) document.getElementById('blood_group_h').value = bg.value;
+  if (al) document.getElementById('allergies_h').value = al.value;
+  if (ch) document.getElementById('chronic_h').value = ch.value;
+}
+function syncEmergencyFields() {
+  const en = document.querySelector('[name="ec_name_real"]');
+  const ep = document.querySelector('[name="ec_phone_real"]');
+  if (en) document.getElementById('ec_name_h').value = en.value;
+  if (ep) document.getElementById('ec_phone_h').value = ep.value;
+}
+</script>
+{% endblock %}
